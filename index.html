@@ -1,0 +1,356 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Shetland Fare Watch</title>
+<meta name="description" content="Tracking the cheapest Loganair fares from Sumburgh over time.">
+<style>
+:root {
+  color-scheme: light;
+  --bg: #f6f5f2;
+  --surface: #fcfcfb;
+  --border: #e3e1dc;
+  --grid: #ebe9e4;
+  --text: #0b0b0b;
+  --text-2: #52514e;
+  --text-3: #85837d;
+  --s1: #2a78d6;
+  --s2: #eb6834;
+  --up: #c4321f;
+  --down: #1f7a3a;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --bg: #121211;
+    --surface: #1a1a19;
+    --border: #2e2d2b;
+    --grid: #262624;
+    --text: #f0efec;
+    --text-2: #c3c2b7;
+    --text-3: #8d8b84;
+    --s1: #3987e5;
+    --s2: #d95926;
+    --up: #ef6b5b;
+    --down: #4fbf6f;
+  }
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --bg: #121211; --surface: #1a1a19; --border: #2e2d2b; --grid: #262624;
+  --text: #f0efec; --text-2: #c3c2b7; --text-3: #8d8b84;
+  --s1: #3987e5; --s2: #d95926; --up: #ef6b5b; --down: #4fbf6f;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font: 16px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  -webkit-text-size-adjust: 100%;
+}
+main { max-width: 760px; margin: 0 auto; padding: 24px 16px 64px; }
+h1 { font-size: 26px; line-height: 1.2; margin: 0 0 6px; letter-spacing: -0.01em; }
+h2 { font-size: 18px; margin: 0 0 4px; }
+p { margin: 0 0 12px; }
+.sub { color: var(--text-2); margin-bottom: 20px; }
+.muted { color: var(--text-3); font-size: 14px; }
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 18px 16px;
+  margin: 0 0 16px;
+}
+.tabs { display: flex; gap: 8px; margin: 0 0 16px; }
+.tabs button {
+  font: inherit; font-size: 15px;
+  padding: 8px 14px; border-radius: 999px;
+  border: 1px solid var(--border); background: var(--surface); color: var(--text-2);
+  cursor: pointer;
+}
+.tabs button[aria-pressed="true"] { background: var(--text); color: var(--bg); border-color: var(--text); }
+.heroes { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 12px; }
+.hero .label { font-size: 13px; color: var(--text-2); }
+.hero .num { font-size: 34px; font-weight: 650; letter-spacing: -0.02em; line-height: 1.1; font-variant-numeric: tabular-nums; }
+.hero .note { font-size: 13px; color: var(--text-3); }
+.legend { display: flex; gap: 16px; flex-wrap: wrap; font-size: 14px; color: var(--text-2); margin: 8px 0 4px; }
+.legend span::before {
+  content: ""; display: inline-block; width: 10px; height: 10px; border-radius: 50%;
+  margin-right: 6px; vertical-align: -1px; background: var(--c);
+}
+.chart { position: relative; }
+.chart svg { display: block; width: 100%; height: auto; overflow: visible; }
+.chart text { fill: var(--text-3); font-size: 11px; font-variant-numeric: tabular-nums; }
+.tip {
+  position: absolute; pointer-events: none; display: none;
+  background: var(--text); color: var(--bg);
+  font-size: 13px; line-height: 1.35; padding: 6px 9px; border-radius: 6px;
+  white-space: nowrap; transform: translate(-50%, calc(-100% - 10px));
+}
+table { width: 100%; border-collapse: collapse; font-size: 15px; font-variant-numeric: tabular-nums; }
+th, td { text-align: left; padding: 7px 4px; border-bottom: 1px solid var(--grid); }
+th { font-weight: 600; font-size: 13px; color: var(--text-2); }
+td.r, th.r { text-align: right; }
+.dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 6px; vertical-align: 1px; }
+.up { color: var(--up); } .down { color: var(--down); }
+details summary { cursor: pointer; color: var(--text-2); font-size: 15px; }
+ul { padding-left: 20px; margin: 0 0 12px; }
+li { margin-bottom: 6px; }
+@media (max-width: 480px) {
+  h1 { font-size: 23px; }
+  .hero .num { font-size: 28px; }
+  table { font-size: 14px; }
+}
+</style>
+</head>
+<body>
+<main>
+  <h1>Shetland fare watch</h1>
+  <p class="sub">Loganair's cheapest available fare for every day over the next four months, checked every three hours. Every price change gets logged, so over time this shows exactly when cheap fares disappear.</p>
+
+  <div class="tabs" role="group" aria-label="Route">
+    <button data-route="EDI" aria-pressed="true">Edinburgh</button>
+    <button data-route="ABZ" aria-pressed="false">Aberdeen</button>
+  </div>
+
+  <section class="card">
+    <h2>The short version</h2>
+    <div class="heroes" id="heroes"></div>
+  </section>
+
+  <section class="card">
+    <h2>Cheapest fare by date</h2>
+    <p class="muted">One dot per day: the lowest one-way fare on any flight that day, as of the latest check. Tap a dot for details.</p>
+    <div class="legend" id="legend"></div>
+    <div class="chart" id="chart"><div class="tip" id="tip"></div></div>
+  </section>
+
+  <section class="card">
+    <h2>How far ahead do you need to book?</h2>
+    <p class="muted">The cheapest fare left on any day in each window, as of today.</p>
+    <table id="buckets"></table>
+  </section>
+
+  <section class="card">
+    <h2>Price changes spotted</h2>
+    <p class="muted" id="changes-note"></p>
+    <table id="changes"></table>
+  </section>
+
+  <section class="card">
+    <h2>What's going on</h2>
+    <p>Loganair doesn't price each seat separately. Every flight has a fixed ladder of fares. On Sumburgh–<span id="route-name">Edinburgh</span> right now the steps are <span id="ladder">…</span>. Each step has a number of seats allocated to it, and a step can close for two reasons:</p>
+    <ul>
+      <li><strong>It sells out:</strong> busy days (Fridays, Sundays, Christmas) lose the cheap steps early.</li>
+      <li><strong>The calendar says so:</strong> cheap steps close at fixed points before departure whether or not the plane is full. That's how a flight a third full can have only the top fare left.</li>
+    </ul>
+    <p>This is standard airline "revenue management": late bookers tend to be people who have to travel and will pay anyway. Collecting data over the coming weeks will show exactly when each step closes.</p>
+    <details>
+      <summary>Caveats</summary>
+      <ul style="margin-top:8px">
+        <li>This is the cheapest fare per <em>day</em>, not per flight. An evening flight can cost more than the day's lowest fare.</li>
+        <li>Prices are per person, one way, excluding ADS / Island Resident discounts.</li>
+        <li>Seat counts aren't captured yet.</li>
+      </ul>
+    </details>
+  </section>
+
+  <p class="muted" id="updated"></p>
+</main>
+
+<script>
+const REPO_RAW = "https://raw.githubusercontent.com/ShetlandJ/loganair-tracker/main/data/";
+const NAMES = { LSI: "Sumburgh", EDI: "Edinburgh", ABZ: "Aberdeen" };
+let route = "EDI";
+let fares = [], runs = [];
+
+function parseCSV(text) {
+  const [head, ...lines] = text.trim().split("\n");
+  const keys = head.split(",");
+  return lines.map(l => Object.fromEntries(l.split(",").map((v, i) => [keys[i], v])));
+}
+
+async function load(name) {
+  for (const base of [REPO_RAW, "data/"]) {
+    try {
+      const r = await fetch(base + name, { cache: "no-store" });
+      if (r.ok) return parseCSV(await r.text());
+    } catch (e) {}
+  }
+  return [];
+}
+
+const today = () => { const d = new Date(); d.setHours(0, 0, 0, 0); return d; };
+const parseDay = s => new Date(s + "T00:00:00");
+const daysOut = s => Math.round((parseDay(s) - today()) / 864e5);
+const fmtDay = s => parseDay(s).toLocaleDateString("en-GB", { weekday: "short", day: "numeric", month: "short" });
+const gbp = p => "£" + Math.round(p);
+
+// Latest known price per (origin, dest, flight_date), plus each key's history.
+function state() {
+  const latest = new Map(), history = new Map();
+  for (const r of fares) {
+    const k = `${r.origin}-${r.dest}-${r.flight_date}`;
+    latest.set(k, r);
+    if (!history.has(k)) history.set(k, []);
+    history.get(k).push(r);
+  }
+  return { latest, history };
+}
+
+function directions() {
+  return [
+    { o: "LSI", d: route, label: `Sumburgh → ${NAMES[route]}`, color: "var(--s1)" },
+    { o: route, d: "LSI", label: `${NAMES[route]} → Sumburgh`, color: "var(--s2)" },
+  ];
+}
+
+function series(latest, o, d) {
+  const out = [];
+  for (const r of latest.values()) {
+    if (r.origin !== o || r.dest !== d || !r.price) continue;
+    const n = daysOut(r.flight_date);
+    if (n < 0) continue;
+    out.push({ date: r.flight_date, days: n, price: +r.price });
+  }
+  return out.sort((a, b) => a.days - b.days);
+}
+
+function render() {
+  const { latest, history } = state();
+  const dirs = directions().map(x => ({ ...x, pts: series(latest, x.o, x.d) }));
+  renderHeroes(dirs);
+  renderChart(dirs);
+  renderBuckets(dirs);
+  renderChanges(history);
+  const ladder = [...new Set(dirs[0].pts.map(p => Math.round(p.price)))].sort((a, b) => a - b);
+  document.getElementById("route-name").textContent = NAMES[route];
+  document.getElementById("ladder").textContent = ladder.map(p => "£" + p).join(", ");
+}
+
+function renderHeroes(dirs) {
+  const pts = dirs[0].pts;
+  const near = pts.filter(p => p.days <= 7);
+  const far = pts.filter(p => p.days >= 60);
+  const min = a => a.length ? Math.min(...a.map(p => p.price)) : null;
+  const n = min(near), f = min(far);
+  document.getElementById("heroes").innerHTML = `
+    <div class="hero"><div class="label">Cheapest within a week</div>
+      <div class="num">${n ? gbp(n) : "–"}</div><div class="note">${dirs[0].label}</div></div>
+    <div class="hero"><div class="label">Cheapest 2+ months out</div>
+      <div class="num">${f ? gbp(f) : "–"}</div><div class="note">${n && f ? `${Math.round((1 - f / n) * 100)}% less than booking late` : ""}</div></div>`;
+}
+
+function renderChart(dirs) {
+  const el = document.getElementById("chart"), tip = document.getElementById("tip");
+  el.querySelector("svg")?.remove();
+  document.getElementById("legend").innerHTML =
+    dirs.map(d => `<span style="--c:${d.color}">${d.label}</span>`).join("");
+
+  const W = Math.max(320, el.clientWidth), H = W < 500 ? 260 : 300;
+  const m = { t: 10, r: 8, b: 30, l: 40 };
+  const all = dirs.flatMap(d => d.pts);
+  if (!all.length) return;
+  const maxD = Math.max(...all.map(p => p.days));
+  const lo = Math.floor(Math.min(...all.map(p => p.price)) / 50) * 50;
+  const hi = Math.ceil(Math.max(...all.map(p => p.price)) / 50) * 50;
+  const x = d => m.l + (d / maxD) * (W - m.l - m.r);
+  const y = p => m.t + (1 - (p - lo) / (hi - lo)) * (H - m.t - m.b);
+
+  let g = "";
+  for (let p = lo; p <= hi; p += 50) {
+    g += `<line x1="${m.l}" x2="${W - m.r}" y1="${y(p)}" y2="${y(p)}" stroke="var(--grid)"/>`;
+    g += `<text x="${m.l - 6}" y="${y(p) + 4}" text-anchor="end">£${p}</text>`;
+  }
+  const step = maxD > 90 ? 30 : 14;
+  for (let d = 0; d <= maxD; d += step)
+    g += `<text x="${x(d)}" y="${H - 10}" text-anchor="middle">${d === 0 ? "today" : d + "d"}</text>`;
+
+  // Jitter the two directions sideways a touch so same-day dots don't sit exactly on top.
+  const marks = dirs.map((s, i) => s.pts.map(p =>
+    `<circle cx="${x(p.days) + (i ? 1.5 : -1.5)}" cy="${y(p.price)}" r="${W < 500 ? 3.2 : 4}" fill="${s.color}" stroke="var(--surface)" stroke-width="1.5"/>`
+  ).join("")).join("");
+
+  el.insertAdjacentHTML("afterbegin",
+    `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Cheapest fare by days until departure">${g}${marks}<line id="xh" y1="${m.t}" y2="${H - m.b}" stroke="var(--text-3)" stroke-dasharray="3 3" style="display:none"/></svg>`);
+
+  const svg = el.querySelector("svg"), xh = svg.getElementById("xh");
+  const move = ev => {
+    const pt = ev.touches ? ev.touches[0] : ev;
+    const r = svg.getBoundingClientRect();
+    const px = (pt.clientX - r.left) * (W / r.width);
+    const d = Math.round(((px - m.l) / (W - m.l - m.r)) * maxD);
+    const rows = dirs.map(s => ({ s, p: s.pts.find(p => p.days === d) })).filter(z => z.p);
+    if (!rows.length) { tip.style.display = "none"; xh.style.display = "none"; return; }
+    xh.setAttribute("x1", x(d)); xh.setAttribute("x2", x(d)); xh.style.display = "";
+    tip.innerHTML = `<strong>${fmtDay(rows[0].p.date)}</strong> · ${d === 0 ? "today" : d + " days away"}<br>` +
+      rows.map(z => `<span class="dot" style="background:${z.s.color}"></span>${z.s.o} → ${z.s.d} ${gbp(z.p.price)}`).join("<br>");
+    const left = x(d) * (r.width / W);
+    tip.style.left = Math.min(Math.max(left, 90), r.width - 90) + "px";
+    tip.style.top = Math.min(...rows.map(z => y(z.p.price))) * (r.height / H) + "px";
+    tip.style.display = "block";
+  };
+  const hide = () => { tip.style.display = "none"; xh.style.display = "none"; };
+  svg.addEventListener("mousemove", move);
+  svg.addEventListener("touchstart", move, { passive: true });
+  svg.addEventListener("touchmove", move, { passive: true });
+  svg.addEventListener("mouseleave", hide);
+}
+
+function renderBuckets(dirs) {
+  const B = [[0, 3, "0–3 days"], [4, 7, "4–7 days"], [8, 14, "1–2 weeks"], [15, 28, "2–4 weeks"], [29, 60, "1–2 months"], [61, 999, "2+ months"]];
+  const cell = (pts, a, b) => {
+    const xs = pts.filter(p => p.days >= a && p.days <= b).map(p => p.price);
+    return xs.length ? gbp(Math.min(...xs)) : "–";
+  };
+  document.getElementById("buckets").innerHTML =
+    `<tr><th>Booking ahead</th>${dirs.map(d => `<th class="r"><span class="dot" style="background:${d.color}"></span>${d.o} → ${d.d}</th>`).join("")}</tr>` +
+    B.map(([a, b, l]) => `<tr><td>${l}</td>${dirs.map(d => `<td class="r">${cell(d.pts, a, b)}</td>`).join("")}</tr>`).join("");
+}
+
+function renderChanges(history) {
+  const first = runs[0]?.snapshot_utc;
+  const rows = [];
+  for (const h of history.values()) {
+    for (let i = 1; i < h.length; i++) {
+      const a = h[i - 1], b = h[i];
+      if (!b.dest.includes(route) && !b.origin.includes(route)) continue;
+      if (daysOut(b.flight_date) < 0) continue;
+      rows.push({ a, b });
+    }
+  }
+  rows.sort((p, q) => q.b.snapshot_utc.localeCompare(p.b.snapshot_utc));
+  const since = first ? new Date(first).toLocaleDateString("en-GB", { day: "numeric", month: "long" }) : "";
+  document.getElementById("changes-note").textContent = rows.length
+    ? `${rows.length} change${rows.length === 1 ? "" : "s"} since tracking began on ${since}. Most recent first.`
+    : `Tracking began on ${since}. No price changes spotted yet. Check back in a few days.`;
+  const price = r => r.price ? gbp(+r.price) : "sold out";
+  document.getElementById("changes").innerHTML = rows.length
+    ? `<tr><th>Flight</th><th>Route</th><th class="r">Change</th><th class="r">Days before</th></tr>` +
+      rows.slice(0, 40).map(({ a, b }) => {
+        const cls = !b.price || +b.price > +a.price ? "up" : "down";
+        return `<tr><td>${fmtDay(b.flight_date)}</td><td>${b.origin}→${b.dest}</td>
+          <td class="r ${cls}">${price(a)} → ${price(b)}</td><td class="r">${b.days_out}</td></tr>`;
+      }).join("")
+    : "";
+}
+
+document.querySelectorAll(".tabs button").forEach(b => b.addEventListener("click", () => {
+  route = b.dataset.route;
+  document.querySelectorAll(".tabs button").forEach(x => x.setAttribute("aria-pressed", x === b));
+  render();
+}));
+let rt; addEventListener("resize", () => { clearTimeout(rt); rt = setTimeout(render, 150); });
+
+(async () => {
+  [fares, runs] = await Promise.all([load("fares.csv"), load("runs.csv")]);
+  render();
+  const last = runs[runs.length - 1];
+  if (last) document.getElementById("updated").textContent =
+    `Last checked ${new Date(last.snapshot_utc).toLocaleString("en-GB", { dateStyle: "medium", timeStyle: "short" })} · ${runs.length} checks so far`;
+})();
+</script>
+</body>
+</html>
