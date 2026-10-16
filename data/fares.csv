@@ -795,3 +795,7 @@ snapshot_utc,origin,dest,flight_date,days_out,price,status
 2026-10-16T16:38:14+00:00,ABZ,LSI,2026-12-13,58,297.99,flight-has-price
 2026-10-16T16:38:14+00:00,ABZ,LSI,2026-12-14,59,133.99,flight-has-price
 2026-10-16T16:38:14+00:00,ABZ,LSI,2027-01-07,83,,flight-no-price
+2026-10-16T21:06:58+00:00,EDI,LSI,2026-10-16,0,,flight-no-price
+2026-10-16T21:06:58+00:00,EDI,LSI,2027-01-05,81,281.99,flight-has-price
+2026-10-16T21:06:58+00:00,LSI,ABZ,2026-12-12,57,132.99,flight-has-price
+2026-10-16T21:06:58+00:00,ABZ,LSI,2027-01-07,83,105.99,flight-has-price
