@@ -387,7 +387,7 @@ function renderEarly(history) {
   document.getElementById("early-note").textContent = cases.length
     ? `On ${cases.length} flight date${cases.length === 1 ? "" : "s"} since ${since}, someone who booked earlier was charged more than someone who booked later. ` +
       `On ${cheaperAtEnd} of them the latest price is still below what the earlier booker paid. ` +
-      `Each "seen" date links to the public snapshot that recorded it. Prices are the cheapest fare on the day, not a specific flight.`
+      `Each timestamp links to the public snapshot that recorded the price. Prices are the cheapest fare on the day, not a specific flight.`
     : `No cases yet on this route since ${since}.`;
   // Snapshots are committed a minute or two after the run starts.
   const proof = (r, file) => {
