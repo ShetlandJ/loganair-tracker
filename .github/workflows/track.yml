@@ -2,11 +2,13 @@ name: track
 
 on:
   schedule:
-    - cron: "17 */3 * * *"
+    # Odd minute: GitHub delays or drops jobs scheduled on the hour.
+    - cron: "41 * * * *"
   workflow_dispatch:
 
 permissions:
   contents: write
+  issues: write
 
 concurrency:
   group: track
@@ -21,6 +23,11 @@ jobs:
         with:
           python-version: "3.12"
       - run: python track.py
+      - name: Open an issue for price drops
+        if: hashFiles('drops.md') != ''
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh issue create --title "Fare drop $(date -u +%Y-%m-%d\ %H:%MZ)" --body-file drops.md
       - name: Commit data
         run: |
           git config user.name "fare-bot"

@@ -16,7 +16,7 @@ import urllib.request
 from pathlib import Path
 
 ROUTES = [("LSI", "EDI"), ("EDI", "LSI"), ("LSI", "ABZ"), ("ABZ", "LSI")]
-HORIZON_DAYS = 120
+HORIZON_DAYS = 330
 ENDPOINT = "https://www.loganair.co.uk/Umbraco/Api/FlightApi/FlightPrices"
 # A bare "Mozilla/5.0" gets an empty 200 back; a full browser UA is needed.
 UA = (
@@ -29,6 +29,8 @@ FARES = DATA / "fares.csv"
 RUNS = DATA / "runs.csv"
 FARE_FIELDS = ["snapshot_utc", "origin", "dest", "flight_date", "days_out", "price", "status"]
 RUN_FIELDS = ["snapshot_utc", "routes_ok", "days_seen", "changes"]
+# Written only when a run sees a price drop; the workflow turns it into an issue.
+DROPS = Path(__file__).parent / "drops.md"
 
 
 def fetch_month(origin, dest, start, end):
@@ -69,12 +71,20 @@ def fetch_route(origin, dest, today, horizon_end):
 
 
 def last_recorded():
-    last = {}
+    """Last (price, status) per key, plus the last non-empty price.
+
+    The last price survives a no-price blip, so a date that vanishes and
+    comes back cheaper still counts as a drop.
+    """
+    last, last_price = {}, {}
     if FARES.exists():
         with FARES.open() as f:
             for r in csv.DictReader(f):
-                last[(r["origin"], r["dest"], r["flight_date"])] = (r["price"], r["status"])
-    return last
+                key = (r["origin"], r["dest"], r["flight_date"])
+                last[key] = (r["price"], r["status"])
+                if r["price"]:
+                    last_price[key] = r["price"]
+    return last, last_price
 
 
 def append(path, fields, rows):
@@ -91,9 +101,9 @@ def main():
     now = dt.datetime.now(dt.timezone.utc).replace(microsecond=0)
     today = now.date()
     horizon_end = today + dt.timedelta(days=HORIZON_DAYS)
-    last = last_recorded()
+    last, last_price = last_recorded()
 
-    changes, routes_ok, days_seen = [], 0, 0
+    changes, drops, routes_ok, days_seen = [], [], 0, 0
     for origin, dest in ROUTES:
         try:
             fares = fetch_route(origin, dest, today, horizon_end)
@@ -104,8 +114,11 @@ def main():
         days_seen += len(fares)
         for day, (price, status) in sorted(fares.items()):
             price = "" if price is None else f"{price:.2f}"
-            if last.get((origin, dest, day.isoformat())) == (price, status):
+            key = (origin, dest, day.isoformat())
+            if last.get(key) == (price, status):
                 continue
+            if price and key in last_price and float(price) < float(last_price[key]):
+                drops.append((origin, dest, day, last_price[key], price))
             changes.append({
                 "snapshot_utc": now.isoformat(),
                 "origin": origin,
@@ -123,7 +136,12 @@ def main():
         "days_seen": days_seen,
         "changes": len(changes),
     }])
-    print(f"{routes_ok}/{len(ROUTES)} routes, {days_seen} days, {len(changes)} changes")
+    if drops:
+        lines = [f"| {o} → {d} | {day:%a %d %b %Y} | £{old} → £{new} | {(day - today).days} |"
+                 for o, d, day, old, new in drops]
+        DROPS.write_text("| Route | Flight | Change | Days out |\n|---|---|---|---|\n"
+                         + "\n".join(lines) + "\n")
+    print(f"{routes_ok}/{len(ROUTES)} routes, {days_seen} days, {len(changes)} changes, {len(drops)} drops")
     if routes_ok == 0:
         raise SystemExit(1)
 
