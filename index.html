@@ -95,6 +95,7 @@ th { font-weight: 600; font-size: 13px; color: var(--text-2); }
 td.r, th.r { text-align: right; }
 .dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 6px; vertical-align: 1px; }
 .up { color: var(--up); } .down { color: var(--down); }
+a, a:visited { color: var(--s1); }
 details summary { cursor: pointer; color: var(--text-2); font-size: 15px; }
 ul { padding-left: 20px; margin: 0 0 12px; }
 li { margin-bottom: 6px; }
@@ -116,10 +117,20 @@ li { margin-bottom: 6px; }
     <button data-route="GLA" aria-pressed="false">Glasgow</button>
     <button data-route="ABZ" aria-pressed="false">Aberdeen</button>
   </div>
+  <div class="tabs" role="group" aria-label="Fare">
+    <button data-fare="full" aria-pressed="true">Full fare</button>
+    <button data-fare="ads" aria-pressed="false">Island resident (ADS)</button>
+  </div>
 
   <section class="card">
     <h2>The short version</h2>
     <div class="heroes" id="heroes"></div>
+  </section>
+
+  <section class="card">
+    <h2>Booked early, paid more</h2>
+    <p class="muted" id="early-note"></p>
+    <table id="early"></table>
   </section>
 
   <section class="card">
@@ -153,7 +164,7 @@ li { margin-bottom: 6px; }
       <summary>Caveats</summary>
       <ul style="margin-top:8px">
         <li>This is the cheapest fare per <em>day</em>, not per flight. An evening flight can cost more than the day's lowest fare.</li>
-        <li>Prices are per person, one way, excluding ADS / Island Resident discounts.</li>
+        <li>Prices are per person, one way. "Full fare" excludes the Air Discount Scheme; "Island resident (ADS)" shows the discounted fare, tracked from 19 October 2026. Some dates have a full fare on sale but no ADS fare.</li>
         <li>Seat counts aren't captured yet.</li>
       </ul>
     </details>
@@ -168,7 +179,9 @@ const NAMES = { LSI: "Sumburgh", EDI: "Edinburgh", GLA: "Glasgow", ABZ: "Aberdee
 // Airports behind each tab. A multi-airport tab shows whichever is cheaper each day.
 const AIRPORTS = { EDIGLA: ["EDI", "GLA"], EDI: ["EDI"], GLA: ["GLA"], ABZ: ["ABZ"] };
 let route = "EDIGLA";
-let fares = [], runs = [];
+let fareKind = "full";
+let fullFares = [], adsFares = [], fares = [], runs = [];
+const COMMITS = "https://github.com/ShetlandJ/loganair-tracker/commits/main/data/";
 
 function parseCSV(text) {
   const [head, ...lines] = text.trim().split("\n");
@@ -233,6 +246,7 @@ function render() {
   renderChart(dirs);
   renderBuckets(dirs);
   renderChanges(history);
+  renderEarly(history);
   // The ladder is per route, so on a multi-airport tab describe the first airport's.
   const first = AIRPORTS[route][0];
   const ladder = [...new Set(series(latest, ["LSI"], [first]).map(p => Math.round(p.price)))].sort((a, b) => a - b);
@@ -348,15 +362,68 @@ function renderChanges(history) {
     : "";
 }
 
-document.querySelectorAll(".tabs button").forEach(b => b.addEventListener("click", () => {
+// For each flight, the biggest gap between a price someone could have paid and a
+// lower price offered later on the same flight date. "Final" is the last price
+// seen before departure (or now, for flights still to come).
+function renderEarly(history) {
+  const ports = AIRPORTS[route];
+  const cases = [];
+  for (const h of history.values()) {
+    const r0 = h[0];
+    if (!ports.includes(r0.dest) && !ports.includes(r0.origin)) continue;
+    const priced = h.filter(r => r.price && +r.days_out >= 0);
+    let best = null, low = null;
+    for (let i = priced.length - 1; i >= 0; i--) {
+      const r = priced[i];
+      if (low && +r.price - +low.price > (best ? best.gap : 0))
+        best = { gap: +r.price - +low.price, early: r, later: low };
+      if (!low || +r.price < +low.price) low = r;
+    }
+    if (best) cases.push({ ...best, final: priced[priced.length - 1] });
+  }
+  cases.sort((a, b) => b.gap - a.gap);
+  const since = runs[0] ? new Date(runs[0].snapshot_utc).toLocaleDateString("en-GB", { day: "numeric", month: "long" }) : "";
+  const cheaperAtEnd = cases.filter(c => +c.final.price < +c.early.price).length;
+  document.getElementById("early-note").textContent = cases.length
+    ? `On ${cases.length} flight date${cases.length === 1 ? "" : "s"} since ${since}, someone who booked earlier was charged more than someone who booked later. ` +
+      `On ${cheaperAtEnd} of them the latest price is still below what the earlier booker paid. ` +
+      `Each "seen" date links to the public snapshot that recorded it. Prices are the cheapest fare on the day, not a specific flight.`
+    : `No cases yet on this route since ${since}.`;
+  // Snapshots are committed a minute or two after the run starts.
+  const proof = (r, file) => {
+    const t = new Date(r.snapshot_utc);
+    const until = new Date(t.getTime() + 15 * 60e3).toISOString();
+    const label = t.toLocaleString("en-GB", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" });
+    return `<a href="${COMMITS}${file}?since=${encodeURIComponent(r.snapshot_utc)}&until=${encodeURIComponent(until)}">${label}</a>`;
+  };
+  const file = fareKind === "ads" ? "fares_ads.csv" : "fares.csv";
+  document.getElementById("early").innerHTML = cases.length
+    ? `<tr><th>Flight</th><th>Route</th><th class="r">Earlier</th><th class="r">Later</th><th class="r">Extra paid</th><th class="r">Latest</th></tr>` +
+      cases.slice(0, 20).map(c => `<tr>
+        <td>${fmtDay(c.early.flight_date)}</td><td>${c.early.origin}→${c.early.dest}</td>
+        <td class="r">${gbp(+c.early.price)}<br><span class="muted">${proof(c.early, file)} · ${c.early.days_out}d</span></td>
+        <td class="r">${gbp(+c.later.price)}<br><span class="muted">${proof(c.later, file)} · ${c.later.days_out}d</span></td>
+        <td class="r up">${gbp(c.gap)}<br><span class="muted">${Math.round(c.gap / +c.early.price * 100)}%</span></td>
+        <td class="r">${gbp(+c.final.price)}<br><span class="muted">${c.final.days_out}d</span></td></tr>`).join("")
+    : "";
+}
+
+document.querySelectorAll(".tabs button[data-route]").forEach(b => b.addEventListener("click", () => {
   route = b.dataset.route;
-  document.querySelectorAll(".tabs button").forEach(x => x.setAttribute("aria-pressed", x === b));
+  document.querySelectorAll(".tabs button[data-route]").forEach(x => x.setAttribute("aria-pressed", x === b));
+  render();
+}));
+document.querySelectorAll(".tabs button[data-fare]").forEach(b => b.addEventListener("click", () => {
+  fareKind = b.dataset.fare;
+  fares = fareKind === "ads" ? adsFares : fullFares;
+  document.querySelectorAll(".tabs button[data-fare]").forEach(x => x.setAttribute("aria-pressed", x === b));
   render();
 }));
 let rt; addEventListener("resize", () => { clearTimeout(rt); rt = setTimeout(render, 150); });
 
 (async () => {
-  [fares, runs] = await Promise.all([load("fares.csv"), load("runs.csv")]);
+  [fullFares, adsFares, runs] = await Promise.all([load("fares.csv"), load("fares_ads.csv"), load("runs.csv")]);
+  fares = fullFares;
   render();
   const last = runs[runs.length - 1];
   if (last) document.getElementById("updated").textContent =
