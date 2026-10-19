@@ -15,7 +15,11 @@ import urllib.parse
 import urllib.request
 from pathlib import Path
 
-ROUTES = [("LSI", "EDI"), ("EDI", "LSI"), ("LSI", "ABZ"), ("ABZ", "LSI")]
+ROUTES = [
+    ("LSI", "EDI"), ("EDI", "LSI"),
+    ("LSI", "GLA"), ("GLA", "LSI"),
+    ("LSI", "ABZ"), ("ABZ", "LSI"),
+]
 HORIZON_DAYS = 330
 ENDPOINT = "https://www.loganair.co.uk/Umbraco/Api/FlightApi/FlightPrices"
 # A bare "Mozilla/5.0" gets an empty 200 back; a full browser UA is needed.

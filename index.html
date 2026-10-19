@@ -63,7 +63,7 @@ p { margin: 0 0 12px; }
   padding: 18px 16px;
   margin: 0 0 16px;
 }
-.tabs { display: flex; gap: 8px; margin: 0 0 16px; }
+.tabs { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 16px; }
 .tabs button {
   font: inherit; font-size: 15px;
   padding: 8px 14px; border-radius: 999px;
@@ -108,10 +108,12 @@ li { margin-bottom: 6px; }
 <body>
 <main>
   <h1>Shetland fare watch</h1>
-  <p class="sub">Loganair's cheapest available fare for every day over the next four months, checked every three hours. Every price change gets logged, so over time this shows exactly when cheap fares disappear.</p>
+  <p class="sub">Loganair's cheapest available fare for every day over the next eleven months, checked hourly. Every price change gets logged, so over time this shows exactly when cheap fares disappear.</p>
 
   <div class="tabs" role="group" aria-label="Route">
-    <button data-route="EDI" aria-pressed="true">Edinburgh</button>
+    <button data-route="EDIGLA" aria-pressed="true">Edinburgh or Glasgow</button>
+    <button data-route="EDI" aria-pressed="false">Edinburgh</button>
+    <button data-route="GLA" aria-pressed="false">Glasgow</button>
     <button data-route="ABZ" aria-pressed="false">Aberdeen</button>
   </div>
 
@@ -162,8 +164,10 @@ li { margin-bottom: 6px; }
 
 <script>
 const REPO_RAW = "https://raw.githubusercontent.com/ShetlandJ/loganair-tracker/main/data/";
-const NAMES = { LSI: "Sumburgh", EDI: "Edinburgh", ABZ: "Aberdeen" };
-let route = "EDI";
+const NAMES = { LSI: "Sumburgh", EDI: "Edinburgh", GLA: "Glasgow", ABZ: "Aberdeen", EDIGLA: "Edinburgh or Glasgow" };
+// Airports behind each tab. A multi-airport tab shows whichever is cheaper each day.
+const AIRPORTS = { EDIGLA: ["EDI", "GLA"], EDI: ["EDI"], GLA: ["GLA"], ABZ: ["ABZ"] };
+let route = "EDIGLA";
 let fares = [], runs = [];
 
 function parseCSV(text) {
@@ -201,32 +205,38 @@ function state() {
 }
 
 function directions() {
+  const ports = AIRPORTS[route], code = ports.join("/");
   return [
-    { o: "LSI", d: route, label: `Sumburgh → ${NAMES[route]}`, color: "var(--s1)" },
-    { o: route, d: "LSI", label: `${NAMES[route]} → Sumburgh`, color: "var(--s2)" },
+    { o: "LSI", d: code, from: ["LSI"], to: ports, label: `Sumburgh → ${NAMES[route]}`, color: "var(--s1)" },
+    { o: code, d: "LSI", from: ports, to: ["LSI"], label: `${NAMES[route]} → Sumburgh`, color: "var(--s2)" },
   ];
 }
 
-function series(latest, o, d) {
-  const out = [];
+// Cheapest fare per date across the given origins and destinations.
+function series(latest, from, to) {
+  const best = new Map();
   for (const r of latest.values()) {
-    if (r.origin !== o || r.dest !== d || !r.price) continue;
+    if (!from.includes(r.origin) || !to.includes(r.dest) || !r.price) continue;
     const n = daysOut(r.flight_date);
     if (n < 0) continue;
-    out.push({ date: r.flight_date, days: n, price: +r.price });
+    const prev = best.get(r.flight_date);
+    if (!prev || +r.price < prev.price)
+      best.set(r.flight_date, { date: r.flight_date, days: n, price: +r.price, o: r.origin, d: r.dest });
   }
-  return out.sort((a, b) => a.days - b.days);
+  return [...best.values()].sort((a, b) => a.days - b.days);
 }
 
 function render() {
   const { latest, history } = state();
-  const dirs = directions().map(x => ({ ...x, pts: series(latest, x.o, x.d) }));
+  const dirs = directions().map(x => ({ ...x, pts: series(latest, x.from, x.to) }));
   renderHeroes(dirs);
   renderChart(dirs);
   renderBuckets(dirs);
   renderChanges(history);
-  const ladder = [...new Set(dirs[0].pts.map(p => Math.round(p.price)))].sort((a, b) => a - b);
-  document.getElementById("route-name").textContent = NAMES[route];
+  // The ladder is per route, so on a multi-airport tab describe the first airport's.
+  const first = AIRPORTS[route][0];
+  const ladder = [...new Set(series(latest, ["LSI"], [first]).map(p => Math.round(p.price)))].sort((a, b) => a - b);
+  document.getElementById("route-name").textContent = NAMES[first];
   document.getElementById("ladder").textContent = ladder.map(p => "£" + p).join(", ");
 }
 
@@ -286,7 +296,7 @@ function renderChart(dirs) {
     if (!rows.length) { tip.style.display = "none"; xh.style.display = "none"; return; }
     xh.setAttribute("x1", x(d)); xh.setAttribute("x2", x(d)); xh.style.display = "";
     tip.innerHTML = `<strong>${fmtDay(rows[0].p.date)}</strong> · ${d === 0 ? "today" : d + " days away"}<br>` +
-      rows.map(z => `<span class="dot" style="background:${z.s.color}"></span>${z.s.o} → ${z.s.d} ${gbp(z.p.price)}`).join("<br>");
+      rows.map(z => `<span class="dot" style="background:${z.s.color}"></span>${z.p.o} → ${z.p.d} ${gbp(z.p.price)}`).join("<br>");
     const left = x(d) * (r.width / W);
     tip.style.left = Math.min(Math.max(left, 90), r.width - 90) + "px";
     tip.style.top = Math.min(...rows.map(z => y(z.p.price))) * (r.height / H) + "px";
@@ -312,11 +322,12 @@ function renderBuckets(dirs) {
 
 function renderChanges(history) {
   const first = runs[0]?.snapshot_utc;
+  const ports = AIRPORTS[route];
   const rows = [];
   for (const h of history.values()) {
     for (let i = 1; i < h.length; i++) {
       const a = h[i - 1], b = h[i];
-      if (!b.dest.includes(route) && !b.origin.includes(route)) continue;
+      if (!ports.includes(b.dest) && !ports.includes(b.origin)) continue;
       if (daysOut(b.flight_date) < 0) continue;
       rows.push({ a, b });
     }
