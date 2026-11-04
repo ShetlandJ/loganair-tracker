@@ -4094,3 +4094,11 @@ snapshot_utc,origin,dest,flight_date,days_out,price,status
 2026-11-03T23:38:57+00:00,ABZ,LSI,2026-11-03,0,,flight-no-price
 2026-11-03T23:38:57+00:00,ABZ,LSI,2026-11-11,8,115.24,flight-has-price
 2026-11-03T23:38:57+00:00,ABZ,LSI,2026-11-13,10,115.24,flight-has-price
+2026-11-04T03:14:43+00:00,LSI,EDI,2027-09-30,330,135.51,flight-has-price
+2026-11-04T03:14:43+00:00,EDI,LSI,2027-09-30,330,,flight-not-available
+2026-11-04T03:14:43+00:00,LSI,GLA,2026-12-22,48,,flight-no-price
+2026-11-04T03:14:43+00:00,LSI,GLA,2027-09-30,330,,flight-not-available
+2026-11-04T03:14:43+00:00,GLA,LSI,2026-12-01,27,,flight-no-price
+2026-11-04T03:14:43+00:00,GLA,LSI,2027-09-30,330,,flight-not-available
+2026-11-04T03:14:43+00:00,LSI,ABZ,2027-09-30,330,,flight-not-available
+2026-11-04T03:14:43+00:00,ABZ,LSI,2027-09-30,330,,flight-not-available
