@@ -5373,3 +5373,4 @@ snapshot_utc,origin,dest,flight_date,days_out,price,status
 2026-11-07T20:29:01+00:00,LSI,GLA,2026-11-23,16,135.51,flight-has-price
 2026-11-07T20:29:01+00:00,LSI,GLA,2026-11-24,17,135.51,flight-has-price
 2026-11-07T20:29:01+00:00,LSI,GLA,2026-11-25,18,147.51,flight-has-price
+2026-11-07T23:55:46+00:00,LSI,EDI,2026-12-16,39,,flight-no-price
