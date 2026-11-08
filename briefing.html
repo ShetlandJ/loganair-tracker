@@ -1,0 +1,416 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Briefing note on Loganair fares to and from Sumburgh, data to 8 November 2026.">
+<meta name="robots" content="noindex">
+<title>Sumburgh Fares Briefing</title>
+<style>
+/* Layout: a single briefing-note column (~70ch) with full-width tables and charts; findings run in order of strength. */
+:root {
+  color-scheme: light;
+  --bg: #f6f5f2; --surface: #fcfcfb; --ink: #0b0b0b; --ink-2: #52514e; --muted: #85837d; --rule: #e3e1dc;
+  --accent: #1f62b5; --accent-wash: #e6eef8; --warn: #8a5a00; --warn-wash: #f8efdc; --no: #a3291b; --no-wash: #f7e5e1;
+  --s1: #2a78d6; --s2: #eb6834; --track: #cfccc5;
+  --f-head: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --f-body: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --f-data: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #121211; --surface: #1a1a19; --ink: #f0efec; --ink-2: #c3c2b7; --muted: #8d8b84; --rule: #2e2d2b;
+  --accent: #6fa8ee; --accent-wash: #1c2a3b; --warn: #e2b65c; --warn-wash: #33290f; --no: #ef8a7e; --no-wash: #3a1d1a;
+  --s1: #3987e5; --s2: #d95926; --track: #45433f; color-scheme: dark; } }
+:root[data-theme="dark"] {
+  --bg: #121211; --surface: #1a1a19; --ink: #f0efec; --ink-2: #c3c2b7; --muted: #8d8b84; --rule: #2e2d2b;
+  --accent: #6fa8ee; --accent-wash: #1c2a3b; --warn: #e2b65c; --warn-wash: #33290f; --no: #ef8a7e; --no-wash: #3a1d1a;
+  --s1: #3987e5; --s2: #d95926; --track: #45433f; color-scheme: dark; }
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--ink); font: 400 16px/1.6 var(--f-body); -webkit-text-size-adjust: 100%; }
+.wrap { max-width: 860px; margin: 0 auto; padding-block: 40px 72px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+.prose { max-width: 68ch; }
+h1, h2, h3 { font-family: var(--f-head); font-weight: 600; text-wrap: balance; line-height: 1.15; margin: 0; }
+h1 { font-size: clamp(30px, 5vw, 42px); letter-spacing: -0.01em; }
+h2 { font-size: 26px; }
+h3 { font-size: 18px; }
+p { margin: 0; }
+a { color: var(--accent); }
+.eyebrow { font: 500 12px/1.4 var(--f-data); letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+.num { font-family: var(--f-data); font-variant-numeric: tabular-nums; }
+.stack { display: flex; flex-direction: column; gap: 14px; }
+section { display: flex; flex-direction: column; gap: 18px; padding-block: 36px; border-top: 1px solid var(--rule); }
+
+header { display: flex; flex-direction: column; gap: 14px; padding-bottom: 28px; }
+.dek { font-size: 18px; color: var(--ink-2); max-width: 62ch; }
+.meta { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px 24px; margin-top: 8px;
+  padding: 16px 0 0; border-top: 1px solid var(--rule); }
+.meta div { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.meta dt { font: 500 11px/1.4 var(--f-data); letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+.meta dd { margin: 0; font-size: 15px; }
+
+.brief { display: grid; gap: 12px; }
+.point { display: grid; grid-template-columns: auto 1fr; gap: 6px 14px; align-items: start; padding: 16px 18px;
+  background: var(--surface); border: 1px solid var(--rule); border-radius: 6px; }
+.point .n { font: 600 22px/1 var(--f-head); color: var(--accent); padding-top: 2px; }
+.point p { min-width: 0; }
+.point strong { font-weight: 600; }
+.tag { display: inline-block; font: 500 11px/1 var(--f-data); letter-spacing: 0.06em; text-transform: uppercase;
+  padding: 4px 7px; border-radius: 3px; vertical-align: 2px; margin-right: 6px; white-space: nowrap; }
+.tag.strong { background: var(--accent-wash); color: var(--accent); }
+.tag.early { background: var(--warn-wash); color: var(--warn); }
+.tag.fact { background: var(--accent-wash); color: var(--accent); }
+
+.callout { padding: 14px 16px; border-radius: 6px; background: var(--warn-wash); color: var(--ink); font-size: 15px; }
+.callout b { color: var(--warn); }
+
+/* Dumbbell chart */
+.chart { background: var(--surface); border: 1px solid var(--rule); border-radius: 6px; padding: 18px 18px 12px; display: flex; flex-direction: column; gap: 14px; }
+.legend { display: flex; flex-wrap: wrap; gap: 6px 18px; font-size: 13px; color: var(--ink-2); }
+.legend span { display: inline-flex; align-items: center; gap: 7px; }
+.sw { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
+.rows { display: flex; flex-direction: column; gap: 14px; }
+.row { display: flex; flex-direction: column; gap: 4px; }
+.row-head { display: flex; justify-content: space-between; gap: 12px; font-size: 14px; flex-wrap: wrap; }
+.row-head .rt { font-weight: 500; }
+.row-head .delta { font-size: 13px; color: var(--ink-2); font-variant-numeric: tabular-nums; }
+.row.dim .rt, .row.dim .delta { color: var(--muted); }
+.track { position: relative; height: 22px; }
+.track::before { content: ""; position: absolute; left: 0; right: 0; top: 50%; height: 1px; background: var(--rule); }
+.bar { position: absolute; top: calc(50% - 1px); height: 2px; background: var(--track); }
+.dot { position: absolute; top: 50%; width: 12px; height: 12px; margin: -6px 0 0 -6px; border-radius: 50%;
+  box-shadow: 0 0 0 2px var(--surface); cursor: default; }
+.dot::after { content: ""; position: absolute; inset: -8px; }
+.dot:focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; }
+.zero { position: absolute; top: 0; bottom: 0; width: 1px; background: var(--ink-2); }
+.cap { font-size: 13px; color: var(--ink-2); }
+.axis { position: relative; height: 18px; border-top: 1px solid var(--rule); font: 400 11px/1 var(--f-data); color: var(--muted); }
+.axis span { position: absolute; top: 5px; transform: translateX(-50%); white-space: nowrap; }
+.axis span:first-child { transform: none; }
+.axis span:last-child { transform: translateX(-100%); }
+.tip { position: fixed; z-index: 5; pointer-events: none; background: var(--ink); color: var(--bg); font-size: 13px; line-height: 1.4;
+  padding: 7px 9px; border-radius: 4px; max-width: 240px; }
+
+/* Tables */
+.tbl { overflow-x: auto; border: 1px solid var(--rule); border-radius: 6px; background: var(--surface); }
+table { border-collapse: collapse; width: 100%; font-size: 14px; min-width: 560px; }
+th, td { text-align: left; padding: 9px 12px; border-bottom: 1px solid var(--rule); vertical-align: top; }
+th { font: 500 11px/1.3 var(--f-data); letter-spacing: 0.05em; text-transform: uppercase; color: var(--muted); background: var(--bg); }
+td.r, th.r { text-align: right; }
+td.r { font-family: var(--f-data); font-variant-numeric: tabular-nums; white-space: nowrap; }
+tr:last-child td { border-bottom: 0; }
+tr.dim td { color: var(--muted); }
+.subhead td { font: 600 12px/1.3 var(--f-data); letter-spacing: 0.05em; text-transform: uppercase; color: var(--ink-2); background: var(--bg); }
+
+details { border-top: 1px solid var(--rule); padding-top: 12px; }
+details summary { cursor: pointer; font-weight: 500; color: var(--ink-2); }
+details[open] summary { margin-bottom: 10px; }
+.how { font-size: 15px; color: var(--ink-2); }
+.how li { margin-bottom: 6px; }
+ul { margin: 0; padding-left: 20px; }
+
+.say { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 14px; }
+.say > div { min-width: 0; padding: 16px 18px; border-radius: 6px; display: flex; flex-direction: column; gap: 10px; }
+.say .yes { background: var(--accent-wash); }
+.say .nope { background: var(--no-wash); }
+.say h3 { font-size: 16px; }
+.say .yes h3 { color: var(--accent); }
+.say .nope h3 { color: var(--no); }
+.say li { margin-bottom: 10px; font-size: 15px; }
+.say li:last-child { margin-bottom: 0; }
+.say .why { display: block; color: var(--ink-2); font-size: 14px; margin-top: 2px; }
+
+.pack { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 14px; }
+.file { background: var(--surface); border: 1px solid var(--rule); border-radius: 6px; padding: 16px 18px; display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+.file .fn { font: 500 13px/1.4 var(--f-data); color: var(--ink-2); word-break: break-all; }
+.btn { display: inline-block; text-decoration: none; font: 500 15px/1 var(--f-body); color: var(--surface); background: var(--accent); border: 0; border-radius: 5px; padding: 11px 16px; cursor: pointer; align-self: flex-start; }
+.btn:hover { filter: brightness(1.08); }
+.btn:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+.status { font-size: 13px; color: var(--muted); min-height: 1.4em; }
+footer { padding-top: 28px; border-top: 1px solid var(--rule); font-size: 13px; color: var(--muted); display: flex; flex-direction: column; gap: 6px; }
+@media (max-width: 520px) { .point { grid-template-columns: 1fr; } .point .n { display: none; } }
+@media (max-width: 640px) {
+  .wrap { padding-block: 24px 56px; }
+  section { padding-block: 28px; }
+  .chart { padding: 14px 14px 10px; }
+  .tbl { border: 0; background: none; overflow: visible; border-radius: 0; }
+  .tbl table { min-width: 0; }
+  .tbl thead { display: none; }
+  .tbl tbody, .tbl tr, .tbl td { display: block; }
+  .tbl tr { background: var(--surface); border: 1px solid var(--rule); border-radius: 6px; padding: 10px 14px; margin-bottom: 10px; }
+  .tbl td { border: 0; padding: 3px 0; display: flex; justify-content: space-between; align-items: baseline; gap: 12px; text-align: right; }
+  .tbl td::before { content: attr(data-label); color: var(--muted); font: 400 13px/1.4 var(--f-body); text-align: left; white-space: normal; }
+  .tbl td:first-child { font-weight: 600; padding-bottom: 6px; justify-content: flex-start; text-align: left; }
+  .tbl td:first-child::before, .tbl tr.subhead td::before { content: none; }
+  .tbl tr.subhead { background: none; border: 0; padding: 10px 0 2px; margin: 0; }
+  .tbl tr.subhead td { background: none; padding: 0; }
+}
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <p class="eyebrow">Briefing note · Data to 8 November 2026, 13:51 GMT</p>
+  <h1>Loganair fares to and from Sumburgh</h1>
+  <p class="dek">What four weeks of automated checks on Loganair's own fare calendar show about the price of flying to and from Shetland, how sure we can be of each point, and what the data can't yet say.</p>
+  <dl class="meta">
+    <div><dt>Prepared by</dt><dd>James Stewart</dd></div>
+    <div><dt>Period</dt><dd>10 Oct to 8 Nov 2026</dd></div>
+    <div><dt>Checks</dt><dd><span class="num">135</span>, about every 5 hours</dd></div>
+    <div><dt>Routes</dt><dd>Sumburgh to and from Aberdeen, Edinburgh, Glasgow</dd></div>
+  </dl>
+</header>
+
+<section aria-labelledby="inbrief">
+  <h2 id="inbrief">In brief</h2>
+  <div class="brief">
+    <div class="point"><span class="n">1</span><p><span class="tag strong">Strong</span><strong>Flying home to Shetland on a Sunday costs more, in almost every week through to next October.</strong> On Aberdeen to Sumburgh the Sunday fare was dearer than the same week's Tuesday to Thursday in all 32 weeks we could compare, typically by £88. On Edinburgh to Sumburgh it was dearer in 27 of 32 weeks, typically by £75. Leaving Shetland on a Sunday carries little or no premium.</p></div>
+    <div class="point"><span class="n">2</span><p><span class="tag early">Early evidence</span><strong>The same flight gets dearer in its last two weeks.</strong> On the Aberdeen and Edinburgh routes, the fare two days before departure was higher than it had been 14 days before on 65 of 70 flights, typically by £50 to £79 one way. Glasgow doesn't follow the pattern: fares fell on 7 of 16 flights. This covers flights from 24 October to 10 November only.</p></div>
+    <div class="point"><span class="n">3</span><p><span class="tag fact">Fact, Oct–Nov flights</span><strong>An ADS card holder booking two days ahead typically paid £137 to £192 one way</strong> on the Aberdeen and Edinburgh routes, and £203 to £215 on Glasgow. Without the card, the same short-notice fares were £259 to £386.</p></div>
+  </div>
+  <p class="callout"><b>Read before quoting.</b> Every figure is the cheapest one-way fare Loganair's website calendar showed for the whole day, not the price of a particular flight, and it hasn't been checked against the final checkout total. Four weeks is too short to say anything about seasons or about fares rising over time. The "Safe to say" section below gives wording that stays within what the data supports.</p>
+</section>
+
+<section aria-labelledby="f1">
+  <p class="eyebrow">Finding 1 · <span class="tag strong">Strong</span></p>
+  <h2 id="f1">Sunday flights into Sumburgh cost more</h2>
+  <div class="prose stack">
+    <p>For every week from 22 November 2026 to 4 October 2027, we compared the Sunday fare with the average of that same week's Tuesday, Wednesday and Thursday fares, as they were on sale on 8 November. Comparing within the same week means school holidays and seasons affect both sides equally.</p>
+    <p>The premium is about coming home. Flights into Sumburgh from Aberdeen and Edinburgh are consistently dearer on Sundays. Flights out of Sumburgh on a Sunday are only slightly dearer, and Glasgow shows a small effect in both directions.</p>
+  </div>
+  <div class="chart" id="chart-sun" role="img" aria-label="Typical Sunday fare against typical Tuesday to Thursday fare, by route. Full table below."></div>
+  <div class="tbl"><table id="tbl-sun"></table></div>
+  <details><summary>How this was measured, and its limits</summary>
+    <ul class="how">
+      <li>Fares are the asking prices on 8 November for flights at least 14 days away. Prices for far-off dates can still change before people book.</li>
+      <li>A week counts only if both its Sunday and at least one of its Tuesday to Thursday had a fare on sale. That gave 32 weeks on every route.</li>
+      <li>"Typical difference" is the median of the 32 weekly differences, so a few unusual weeks don't move it.</li>
+      <li>Compared with the average of Monday to Saturday instead, the result holds for flights into Sumburgh from Aberdeen (Sunday dearer in 34 of 35 weeks, typically +£85) and Edinburgh (30 of 35, +£69). For the other four routes it mostly disappears (+£1 to +£13), so the premium should only be claimed for those two routes.</li>
+      <li>Weeks without a Sunday fare are weeks with no Sunday flight in the schedule (for example holiday weeks), not missing data.</li>
+      <li>We haven't checked the timetable. If Sunday has fewer flights than midweek, that alone could push the cheapest fare up. It's worth asking Loganair.</li>
+      <li>ADS fares show the same pattern into Sumburgh (Aberdeen 4 of 4 weeks dearer, Edinburgh 4 of 4, Glasgow 5 of 5), but the ADS calendar has too many gaps far ahead for that to stand on its own yet.</li>
+    </ul>
+  </details>
+</section>
+
+<section aria-labelledby="f2">
+  <p class="eyebrow">Finding 2 · <span class="tag early">Early evidence</span></p>
+  <h2 id="f2">The same flight gets dearer in its final fortnight</h2>
+  <div class="prose stack">
+    <p>For each flight date that had come within two days of departure by 8 November, we compared the cheapest fare on sale 14 days before with the cheapest fare on sale 2 days before. Because it is the same day's flights measured twice, season and day of the week can't explain the difference.</p>
+    <p>On the Aberdeen and Edinburgh routes the fare rose on 65 of 70 flights. Glasgow doesn't follow the pattern. On Sumburgh to Glasgow, fares fell on 4 of 8 flights and the typical change was slightly down. Glasgow to Sumburgh rose on 5 of 8.</p>
+  </div>
+  <div class="chart" id="chart-same" role="img" aria-label="Change in fare from 14 days to 2 days before departure, one dot per flight, by route. Full table below."></div>
+  <div class="tbl"><table id="tbl-same"></table></div>
+  <details><summary>How this was measured, and its limits</summary>
+    <ul class="how">
+      <li>The sample is small: 16 to 18 flights per route for Aberdeen and Edinburgh, 8 for Glasgow (tracked from 19 October). All are late-October and early-November flights, a quiet time of year. A busy period could look quite different.</li>
+      <li>"Typical change" is the median of each flight's own change. The typical prices 14 days and 2 days before are medians of each column on their own. Where fares moved in both directions (Glasgow), one doesn't equal the difference between the other two. The chart shows every flight's own change so nothing is hidden.</li>
+      <li>Fares are read from the last check before each point. Checks ran about every 5 hours, so a fare that rose and fell back between checks would be missed.</li>
+      <li>Looking 21 days ahead instead of 14 gives the same picture on fewer flights: Aberdeen to Sumburgh rose on 11 of 11 (typically +£65), Edinburgh to Sumburgh 9 of 10 (+£67), Sumburgh to Aberdeen 11 of 11 (+£46), Sumburgh to Edinburgh 10 of 11 (+£81).</li>
+      <li>ADS fares rose on the Aberdeen and Edinburgh routes too, by less in pounds (typically £21 to £29), but on only 4 to 7 flights per route, all departing 2 to 10 November. On Glasgow, ADS fares fell on 5 of 8 flights.</li>
+    </ul>
+  </details>
+</section>
+
+<section aria-labelledby="f3">
+  <p class="eyebrow">Finding 3 · <span class="tag fact">Fact, Oct–Nov flights</span></p>
+  <h2 id="f3">What booking two days ahead actually cost</h2>
+  <div class="prose stack">
+    <p>The cheapest one-way fare on sale two days before each flight, for flights from 12 October to 10 November (ADS and Glasgow from 21 October). With an ADS card, a typical short-notice return between Sumburgh and Edinburgh came to around £370 (£175 out, £192 back).</p>
+    <p>On Sumburgh to Edinburgh, on 16 of 30 dates the cheapest seat on any flight two days out was £385.99. That is the top step of the fixed set of fares Loganair uses on that route, so nothing cheaper was left that day.</p>
+  </div>
+  <div class="tbl"><table id="tbl-short"></table></div>
+  <details><summary>How this was measured, and its limits</summary>
+    <ul class="how">
+      <li>These are typical (median) prices for October and November flights. They are not a comparison with booking early, which would mean comparing different flights in different seasons.</li>
+      <li>"No fare shown" means the calendar showed no price that day. That can mean sold out, not on sale or no flight, and the data can't tell which. Those dates are left out of the typical price and counted separately in the table. On Glasgow to Sumburgh it was 6 of 21 dates. If those were sold out, the real short-notice picture there is worse than the typical price suggests.</li>
+      <li>ADS figures cover fewer dates because Loganair's ADS calendar returns gaps (see "How the data was collected").</li>
+    </ul>
+  </details>
+</section>
+
+<section aria-labelledby="say">
+  <h2 id="say">Safe to say, and what to avoid</h2>
+  <div class="say">
+    <div class="yes"><h3>Supported by the data</h3>
+      <ul>
+        <li>"On Aberdeen to Sumburgh, the Sunday flight home is dearer than midweek in every week Loganair has on sale through to next October, typically by about £88."</li>
+        <li>"Looking at the same flights, fares between Shetland and Aberdeen or Edinburgh rose in the final two weeks on 65 of 70 flights checked, typically by £50 to £80."<span class="why">Say "early evidence" or "in October and November".</span></li>
+        <li>"Even with an ADS card, booking two days ahead typically cost £137 to £192 one way on the Aberdeen and Edinburgh routes this autumn."</li>
+        <li>"These are Loganair's own published fares, checked automatically about every five hours."</li>
+      </ul>
+    </div>
+    <div class="nope"><h3>Not supported yet</h3>
+      <ul>
+        <li>"Fares triple at short notice."<span class="why">Far-ahead fares are for different flights in different seasons. Only same-flight comparisons are fair, and they show rises of £50 to £80.</span></li>
+        <li>"Fares are going up" or "up on last year."<span class="why">Four weeks of data can't show a trend.</span></li>
+        <li>"ADS fares run out" or "Loganair limits ADS seats."<span class="why">The ADS gaps come from Loganair's ADS calendar returning empty prices, not from ADS seats running out.</span></li>
+        <li>"Sunday flights cost more" on every route.<span class="why">It holds into Sumburgh from Aberdeen and Edinburgh. Elsewhere the effect is small or disappears.</span></li>
+        <li>"Fares always rise close to departure."<span class="why">True for Aberdeen and Edinburgh in this period. Glasgow fares fell about as often as they rose.</span></li>
+        <li>"Flights were sold out."<span class="why">"No fare shown" has several possible causes.</span></li>
+        <li>Any claim about a specific flight time.<span class="why">The data is the cheapest fare across the whole day.</span></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section aria-labelledby="ask">
+  <h2 id="ask">Questions only Loganair or Transport Scotland can answer</h2>
+  <ul class="prose how" style="font-size:16px;color:var(--ink)">
+    <li>Why are Sunday flights into Sumburgh priced higher than midweek across the whole schedule? Is it fewer flights, fewer seats, or demand-based pricing?</li>
+    <li>How many seats on a typical Shetland flight are sold at the lowest fare, and how quickly do they go?</li>
+    <li>What share of Shetland passengers, and of ADS passengers, book within 14 days of flying?</li>
+    <li>How much ADS spend goes on short-notice and Sunday travel, compared with travel booked further ahead?</li>
+  </ul>
+</section>
+
+<section aria-labelledby="gaps">
+  <h2 id="gaps">What the data can't show yet</h2>
+  <ul class="prose how" style="font-size:16px;color:var(--ink)">
+    <li><b>Seasons.</b> We only have October and November so far. Christmas, Up Helly Aa and summer will come.</li>
+    <li><b>A fare's whole time on sale.</b> Flights go on sale nearly a year ahead. We've seen the last month at most, so we can't yet say how much booking four months ahead saves.</li>
+    <li><b>Change over time.</b> Whether fares are rising year on year needs many months of data.</li>
+  </ul>
+  <p class="prose"><b>Next:</b> Christmas and New Year flights are already being tracked. By early January we'll have each festive flight's price from about six weeks out to departure, with and without ADS. That will be a larger and more topical version of Finding 2.</p>
+</section>
+
+<section aria-labelledby="method">
+  <h2 id="method">How the data was collected</h2>
+  <ul class="prose how">
+    <li><b>Source.</b> The fare calendar on loganair.co.uk: the date picker that shows the lowest fare for each day when you search for a flight. The same request the website makes is sent automatically, once for full fares and once with the Air Discount Scheme option selected.</li>
+    <li><b>What's recorded.</b> For every date up to 330 days ahead, the lowest one-way fare per person shown for that day. A new row is written only when a date's fare changes.</li>
+    <li><b>Coverage.</b> Edinburgh and Aberdeen full fares from 10 October 2026. Glasgow and all ADS fares from 19 October 2026.</li>
+    <li><b>Frequency.</b> 135 checks between 10 October and 8 November. The usual gap was about 5 hours and the longest was 10.6 hours. The scheduler (GitHub Actions) runs late more often than planned, so short-lived fare changes may be missed.</li>
+    <li><b>ADS gaps.</b> Loganair's ADS calendar often returns no price for dates that do have a full fare: on 53% of dates in the next 30 days an ADS fare was shown, 33% at 31 to 90 days, and 8% beyond 90 days, against 86% to 90% for full fares. The ADS discount applies to every booking, so these gaps come from the calendar, not from ADS fares being unavailable. ADS figures here use only the dates where a price was shown.</li>
+    <li><b>Not checked.</b> Whether the calendar price matches the final checkout total including any fees. Loganair has not been asked to comment.</li>
+    <li><b>Open data.</b> The code and full history are public at <a href="https://github.com/shetlandj/loganair-tracker" target="_blank" rel="noopener">github.com/shetlandj/loganair-tracker</a>, so anyone can check the figures.</li>
+  </ul>
+</section>
+
+<section aria-labelledby="pack">
+  <h2 id="pack">Data pack</h2>
+  <p class="prose">Every figure on this page can be traced to a sheet in the pack. The Excel workbook opens with a "Read me" sheet that explains each column.</p>
+  <div class="pack">
+    <div class="file">
+      <h3>Excel workbook</h3>
+      <p class="how">Read me, Sunday v midweek (week by week), same flight (flight by flight), all fares on sale on 8 Nov, full change logs, and every check.</p>
+      <p class="fn">loganair-sumburgh-fares-8-nov-2026.xlsx · 450 KB</p>
+      <a class="btn" href="briefing/loganair-sumburgh-fares-8-nov-2026.xlsx" download>Download workbook</a>
+    </div>
+    <div class="file">
+      <h3>CSV files</h3>
+      <p class="how">The same tables as separate CSV files with a README, for anyone working in other tools.</p>
+      <p class="fn">loganair-sumburgh-fares-8-nov-2026-csv.zip · 90 KB</p>
+      <a class="btn" href="briefing/loganair-sumburgh-fares-8-nov-2026-csv.zip" download>Download CSV files</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <p>Prepared by James Stewart from publicly available fares on loganair.co.uk. Independent work; not produced by or with Loganair.</p>
+  <p>Data to 8 November 2026, 13:51 GMT.</p>
+</footer>
+</div>
+<div class="tip" id="tip" hidden></div>
+
+<script>
+const DATA = {"cut_utc": "2026-11-08T13:51:39+00:00", "first_utc": "2026-10-10T13:01:42+00:00", "checks": 135, "routes": {"ABZ-LSI": {"name": "Aberdeen to Sumburgh", "full_from": "2026-10-10", "ads_from": "2026-10-19"}, "EDI-LSI": {"name": "Edinburgh to Sumburgh", "full_from": "2026-10-10", "ads_from": "2026-10-19"}, "GLA-LSI": {"name": "Glasgow to Sumburgh", "full_from": "2026-10-19", "ads_from": "2026-10-19"}, "LSI-ABZ": {"name": "Sumburgh to Aberdeen", "full_from": "2026-10-10", "ads_from": "2026-10-19"}, "LSI-EDI": {"name": "Sumburgh to Edinburgh", "full_from": "2026-10-10", "ads_from": "2026-10-19"}, "LSI-GLA": {"name": "Sumburgh to Glasgow", "full_from": "2026-10-19", "ads_from": "2026-10-19"}}, "sunday": {"full:ABZ-LSI": {"weeks": 32, "dearer": 32, "same": 0, "cheaper": 0, "median_sunday": 215, "median_midweek": 127, "median_diff": 88, "pct": 70}, "full:EDI-LSI": {"weeks": 32, "dearer": 27, "same": 1, "cheaper": 4, "median_sunday": 258, "median_midweek": 180, "median_diff": 75, "pct": 41}, "full:GLA-LSI": {"weeks": 32, "dearer": 23, "same": 1, "cheaper": 8, "median_sunday": 211, "median_midweek": 193, "median_diff": 18, "pct": 9}, "full:LSI-ABZ": {"weeks": 32, "dearer": 24, "same": 2, "cheaper": 6, "median_sunday": 160, "median_midweek": 127, "median_diff": 20, "pct": 16}, "full:LSI-EDI": {"weeks": 32, "dearer": 24, "same": 0, "cheaper": 8, "median_sunday": 200, "median_midweek": 180, "median_diff": 10, "pct": 6}, "full:LSI-GLA": {"weeks": 32, "dearer": 18, "same": 0, "cheaper": 14, "median_sunday": 223, "median_midweek": 214, "median_diff": 8, "pct": 4}, "ads:ABZ-LSI": {"weeks": 4, "dearer": 4, "same": 0, "cheaper": 0, "median_sunday": 155, "median_midweek": 101, "median_diff": 54, "pct": 53}, "ads:EDI-LSI": {"weeks": 4, "dearer": 4, "same": 0, "cheaper": 0, "median_sunday": 163, "median_midweek": 115, "median_diff": 48, "pct": 42}, "ads:GLA-LSI": {"weeks": 5, "dearer": 5, "same": 0, "cheaper": 0, "median_sunday": 155, "median_midweek": 107, "median_diff": 41, "pct": 38}, "ads:LSI-ABZ": {"weeks": 2, "dearer": 1, "same": 0, "cheaper": 1, "median_sunday": 90, "median_midweek": 99, "median_diff": -9, "pct": -9}, "ads:LSI-EDI": {"weeks": 2, "dearer": 1, "same": 0, "cheaper": 1, "median_sunday": 115, "median_midweek": 113, "median_diff": 2, "pct": 2}, "ads:LSI-GLA": {"weeks": 1, "dearer": 1, "same": 0, "cheaper": 0, "median_sunday": 136, "median_midweek": 107, "median_diff": 29, "pct": 27}}, "sunday_window": {"from": "2026-11-22", "to": "2027-10-04"}, "same_flight": {"full:ABZ-LSI:21": {"n": 11, "up": 11, "same": 0, "down": 0, "median_before": 210, "median_2d": 275, "mean_change": 77, "median_change": 65, "dates": ["2026-10-31", "2026-11-10"]}, "full:ABZ-LSI:14": {"n": 18, "up": 17, "same": 1, "down": 0, "median_before": 233, "median_2d": 294, "mean_change": 69, "median_change": 72, "dates": ["2026-10-24", "2026-11-10"]}, "full:EDI-LSI:21": {"n": 10, "up": 9, "same": 0, "down": 1, "median_before": 255, "median_2d": 321, "mean_change": 64, "median_change": 67, "dates": ["2026-10-31", "2026-11-10"]}, "full:EDI-LSI:14": {"n": 16, "up": 15, "same": 0, "down": 1, "median_before": 282, "median_2d": 334, "mean_change": 56, "median_change": 79, "dates": ["2026-10-24", "2026-11-10"]}, "full:GLA-LSI:21": {"n": 1, "up": 1, "same": 0, "down": 0, "median_before": 278, "median_2d": 300, "mean_change": 22, "median_change": 22, "dates": ["2026-11-10", "2026-11-10"]}, "full:GLA-LSI:14": {"n": 8, "up": 5, "same": 0, "down": 3, "median_before": 304, "median_2d": 330, "mean_change": 21, "median_change": 26, "dates": ["2026-11-02", "2026-11-10"]}, "full:LSI-ABZ:21": {"n": 11, "up": 11, "same": 0, "down": 0, "median_before": 186, "median_2d": 246, "mean_change": 63, "median_change": 46, "dates": ["2026-10-31", "2026-11-10"]}, "full:LSI-ABZ:14": {"n": 18, "up": 18, "same": 0, "down": 0, "median_before": 209, "median_2d": 259, "mean_change": 55, "median_change": 50, "dates": ["2026-10-24", "2026-11-10"]}, "full:LSI-EDI:21": {"n": 11, "up": 10, "same": 0, "down": 1, "median_before": 279, "median_2d": 331, "mean_change": 63, "median_change": 81, "dates": ["2026-10-31", "2026-11-10"]}, "full:LSI-EDI:14": {"n": 18, "up": 15, "same": 0, "down": 3, "median_before": 279, "median_2d": 331, "mean_change": 56, "median_change": 79, "dates": ["2026-10-24", "2026-11-10"]}, "full:LSI-GLA:21": {"n": 1, "up": 1, "same": 0, "down": 0, "median_before": 279, "median_2d": 300, "mean_change": 21, "median_change": 21, "dates": ["2026-11-09", "2026-11-09"]}, "full:LSI-GLA:14": {"n": 8, "up": 3, "same": 1, "down": 4, "median_before": 305, "median_2d": 343, "mean_change": 13, "median_change": -2, "dates": ["2026-11-02", "2026-11-09"]}, "ads:ABZ-LSI:21": {"n": 1, "up": 1, "same": 0, "down": 0, "median_before": 127, "median_2d": 159, "mean_change": 33, "median_change": 33, "dates": ["2026-11-09", "2026-11-09"]}, "ads:ABZ-LSI:14": {"n": 5, "up": 5, "same": 0, "down": 0, "median_before": 138, "median_2d": 159, "mean_change": 27, "median_change": 21, "dates": ["2026-11-02", "2026-11-09"]}, "ads:EDI-LSI:14": {"n": 4, "up": 3, "same": 0, "down": 1, "median_before": 166, "median_2d": 183, "mean_change": 21, "median_change": 24, "dates": ["2026-11-03", "2026-11-10"]}, "ads:GLA-LSI:21": {"n": 1, "up": 1, "same": 0, "down": 0, "median_before": 162, "median_2d": 173, "mean_change": 11, "median_change": 11, "dates": ["2026-11-10", "2026-11-10"]}, "ads:GLA-LSI:14": {"n": 5, "up": 2, "same": 0, "down": 3, "median_before": 175, "median_2d": 173, "mean_change": 0, "median_change": -2, "dates": ["2026-11-02", "2026-11-10"]}, "ads:LSI-ABZ:14": {"n": 7, "up": 7, "same": 0, "down": 0, "median_before": 101, "median_2d": 124, "mean_change": 22, "median_change": 22, "dates": ["2026-11-02", "2026-11-10"]}, "ads:LSI-EDI:21": {"n": 2, "up": 2, "same": 0, "down": 0, "median_before": 135, "median_2d": 157, "mean_change": 21, "median_change": 21, "dates": ["2026-11-09", "2026-11-10"]}, "ads:LSI-EDI:14": {"n": 6, "up": 5, "same": 0, "down": 1, "median_before": 149, "median_2d": 167, "mean_change": 26, "median_change": 29, "dates": ["2026-11-02", "2026-11-10"]}, "ads:LSI-GLA:21": {"n": 1, "up": 1, "same": 0, "down": 0, "median_before": 149, "median_2d": 160, "mean_change": 10, "median_change": 10, "dates": ["2026-11-09", "2026-11-09"]}, "ads:LSI-GLA:14": {"n": 3, "up": 1, "same": 0, "down": 2, "median_before": 162, "median_2d": 160, "mean_change": 12, "median_change": -2, "dates": ["2026-11-02", "2026-11-09"]}}, "short_notice": {"full:ABZ-LSI": {"n": 30, "no_fare_shown": 0, "median": 294, "min": 230, "max": 355, "route_highest": 355, "at_route_highest": 6, "dates": ["2026-10-12", "2026-11-10"]}, "full:EDI-LSI": {"n": 29, "no_fare_shown": 1, "median": 334, "min": 288, "max": 389, "route_highest": 389, "at_route_highest": 8, "dates": ["2026-10-12", "2026-11-10"]}, "full:GLA-LSI": {"n": 15, "no_fare_shown": 6, "median": 385, "min": 288, "max": 385, "route_highest": 385, "at_route_highest": 6, "dates": ["2026-10-21", "2026-11-10"]}, "full:LSI-ABZ": {"n": 30, "no_fare_shown": 0, "median": 259, "min": 230, "max": 354, "route_highest": 354, "at_route_highest": 3, "dates": ["2026-10-12", "2026-11-10"]}, "full:LSI-EDI": {"n": 30, "no_fare_shown": 0, "median": 386, "min": 288, "max": 386, "route_highest": 386, "at_route_highest": 16, "dates": ["2026-10-12", "2026-11-10"]}, "full:LSI-GLA": {"n": 20, "no_fare_shown": 1, "median": 386, "min": 288, "max": 386, "route_highest": 386, "at_route_highest": 16, "dates": ["2026-10-21", "2026-11-09"]}, "ads:ABZ-LSI": {"n": 19, "no_fare_shown": 2, "median": 159, "min": 137, "max": 199, "route_highest": 199, "at_route_highest": 5, "dates": ["2026-10-22", "2026-11-10"]}, "ads:EDI-LSI": {"n": 17, "no_fare_shown": 4, "median": 192, "min": 175, "max": 219, "route_highest": 219, "at_route_highest": 7, "dates": ["2026-10-21", "2026-11-10"]}, "ads:GLA-LSI": {"n": 13, "no_fare_shown": 8, "median": 215, "min": 167, "max": 215, "route_highest": 215, "at_route_highest": 5, "dates": ["2026-10-21", "2026-11-10"]}, "ads:LSI-ABZ": {"n": 19, "no_fare_shown": 2, "median": 137, "min": 123, "max": 185, "route_highest": 185, "at_route_highest": 2, "dates": ["2026-10-21", "2026-11-10"]}, "ads:LSI-EDI": {"n": 18, "no_fare_shown": 3, "median": 175, "min": 154, "max": 203, "route_highest": 203, "at_route_highest": 8, "dates": ["2026-10-21", "2026-11-10"]}, "ads:LSI-GLA": {"n": 17, "no_fare_shown": 4, "median": 203, "min": 154, "max": 203, "route_highest": 203, "at_route_highest": 14, "dates": ["2026-10-21", "2026-11-09"]}}, "collection": {"median_gap_h": 5.2, "max_gap_h": 10.6, "gaps_over_8h": 9}, "ads_coverage": {"0-30": {"dates": 186, "full_pct": 90, "ads_pct": 53}, "31-90": {"dates": 360, "full_pct": 86, "ads_pct": 33}, "91+": {"dates": 1440, "full_pct": 89, "ads_pct": 8}}};
+const ROUTES = ["ABZ-LSI", "EDI-LSI", "GLA-LSI", "LSI-ABZ", "LSI-EDI", "LSI-GLA"];
+const NAME = r => DATA.routes[r].name;
+const gbp = v => "£" + Math.round(v).toLocaleString("en-GB");
+const sgn = v => (v > 0 ? "+" : v < 0 ? "−" : "±") + "£" + Math.abs(Math.round(v));
+const MAX = 400;
+const tip = document.getElementById("tip");
+
+function showTip(el, html) {
+  tip.innerHTML = html; tip.hidden = false;
+  const r = el.getBoundingClientRect(), t = tip.getBoundingClientRect();
+  let x = r.left + r.width / 2 - t.width / 2; x = Math.max(8, Math.min(x, innerWidth - t.width - 8));
+  let y = r.top - t.height - 10; if (y < 8) y = r.bottom + 10;
+  tip.style.left = x + "px"; tip.style.top = y + "px";
+}
+function hideTip() { tip.hidden = true; }
+
+function dumbbell(el, { legend, rows }) {
+  const lg = legend.map(([c, l]) => `<span><i class="sw" style="background:var(${c})"></i>${l}</span>`).join("");
+  const body = rows.map(r => {
+    const a = r.a / MAX * 100, b = r.b / MAX * 100;
+    return `<div class="row${r.dim ? " dim" : ""}"><div class="row-head"><span class="rt">${r.name}</span><span class="delta">${r.note}</span></div>
+      <div class="track"><div class="bar" style="left:${Math.min(a, b)}%;width:${Math.abs(b - a)}%"></div>
+      <span class="dot" tabindex="0" style="left:${a}%;background:var(${legend[0][0]})" data-tip="${r.name}<br>${legend[0][1]}: ${gbp(r.a)}"></span>
+      <span class="dot" tabindex="0" style="left:${b}%;background:var(${legend[1][0]})" data-tip="${r.name}<br>${legend[1][1]}: ${gbp(r.b)}"></span></div></div>`;
+  }).join("");
+  const ticks = [0, 100, 200, 300, 400].map(v => `<span style="left:${v / MAX * 100}%">£${v}</span>`).join("");
+  el.innerHTML = `<div class="legend">${lg}</div><div class="rows">${body}</div><div class="axis">${ticks}</div>`;
+  el.querySelectorAll(".dot").forEach(d => {
+    const on = () => showTip(d, d.dataset.tip);
+    d.addEventListener("mouseenter", on); d.addEventListener("focus", on);
+    d.addEventListener("mouseleave", hideTip); d.addEventListener("blur", hideTip);
+  });
+}
+
+// Card labels for the narrow-screen table layout
+function labelize(id, labels) {
+  document.querySelectorAll("#" + id + " tbody tr:not(.subhead)").forEach(tr =>
+    [...tr.children].forEach((td, i) => { if (!td.hasAttribute("colspan")) td.dataset.label = labels[i] || ""; }));
+}
+
+// Finding 1
+const S = DATA.sunday;
+dumbbell(document.getElementById("chart-sun"), {
+  legend: [["--s1", "Typical Tue–Thu fare"], ["--s2", "Typical Sunday fare"]],
+  rows: ROUTES.map(r => { const s = S["full:" + r]; return { name: NAME(r), a: s.median_midweek, b: s.median_sunday,
+    dim: s.median_diff < 30, note: `${sgn(s.median_diff)} typical · Sunday dearer ${s.dearer} of ${s.weeks} weeks` }; })
+});
+document.getElementById("tbl-sun").innerHTML =
+  `<thead><tr><th>Route</th><th class="r">Weeks compared</th><th class="r">Sunday dearer</th><th class="r">Typical Tue–Thu</th><th class="r">Typical Sunday</th><th class="r">Typical difference</th></tr></thead><tbody>` +
+  ROUTES.map(r => { const s = S["full:" + r]; return `<tr class="${s.median_diff < 30 ? "dim" : ""}"><td>${NAME(r)}</td><td class="r">${s.weeks}</td><td class="r">${s.dearer}</td><td class="r">${gbp(s.median_midweek)}</td><td class="r">${gbp(s.median_sunday)}</td><td class="r">${sgn(s.median_diff)}</td></tr>`; }).join("") +
+  `</tbody>`;
+labelize("tbl-sun", ["", "Weeks compared", "Sunday dearer", "Typical Tue–Thu", "Typical Sunday", "Typical difference"]);
+
+// Finding 2: one dot per flight, its own change from 14 days to 2 days before departure
+const F = DATA.same_flight;
+const CHANGES = {"ABZ-LSI": [122.0, 0.0, 95.0, 88.0, 111.0, 73.0, 73.0, 88.0, 95.0, 122.0, 65.0, 46.0, 46.0, 71.0, 27.0, 30.0, 42.0, 42.0], "EDI-LSI": [26.0, 81.0, 79.0, 79.0, 79.0, 52.0, 79.0, 81.0, 107.0, 107.0, 79.0, 53.0, 6.0, 6.0, -34.0, 18.0], "GLA-LSI": [81.0, 55.0, 81.0, 26.0, 26.0, -15.84, -84.84, -3.84], "LSI-ABZ": [50.0, 73.0, 73.0, 50.0, 65.0, 65.0, 50.0, 122.0, 50.0, 73.0, 46.0, 23.0, 38.0, 44.0, 16.0, 60.0, 44.0, 44.0], "LSI-EDI": [81.0, 52.0, 79.0, 79.0, 79.0, 107.0, 81.0, 81.0, 52.0, 79.0, 107.0, 107.0, 81.0, -86.0, -17.0, 9.0, 36.0, -5.0], "LSI-GLA": [81.0, 55.0, 81.0, 0.0, -86.0, -17.0, -5.0, -5.0]};
+(function strip(el) {
+  const LO = -100, HI = 150, x = v => (v - LO) / (HI - LO) * 100;
+  const body = ROUTES.map(r => {
+    const s = F["full:" + r + ":14"], seen = {};
+    const dots = CHANGES[r].slice().sort((a, b) => a - b).map(v => {
+      const k = seen[v] = (seen[v] || 0) + 1, off = (k % 2 ? -1 : 1) * Math.floor(k / 2) * 6;
+      return `<span class="dot" tabindex="0" style="left:${x(v)}%;top:calc(50% + ${off}px);width:10px;height:10px;margin:-5px 0 0 -5px;background:var(--s2)" data-tip="${NAME(r)}<br>One flight: ${sgn(v)}"></span>`;
+    }).join("");
+    return `<div class="row${r.includes("GLA") ? " dim" : ""}"><div class="row-head"><span class="rt">${NAME(r)}</span><span class="delta">rose on ${s.up} of ${s.n} flights · typical ${sgn(s.median_change)}</span></div>
+      <div class="track" style="height:44px"><div class="zero" style="left:${x(0)}%"></div>${dots}</div></div>`;
+  }).join("");
+  const ticks = [-100, -50, 0, 50, 100, 150].map(v => `<span style="left:${x(v)}%">${v === 0 ? "£0" : sgn(v)}</span>`).join("");
+  el.innerHTML = `<p class="cap">Each dot is one flight: how much its cheapest fare changed between 14 days and 2 days before departure. Dots right of the line got dearer.</p><div class="rows">${body}</div><div class="axis">${ticks}</div>`;
+  el.querySelectorAll(".dot").forEach(d => {
+    const on = () => showTip(d, d.dataset.tip);
+    d.addEventListener("mouseenter", on); d.addEventListener("focus", on);
+    d.addEventListener("mouseleave", hideTip); d.addEventListener("blur", hideTip);
+  });
+})(document.getElementById("chart-same"));
+const fmtD = d => new Date(d + "T12:00:00Z").toLocaleDateString("en-GB", { day: "numeric", month: "short", timeZone: "UTC" });
+const sameRow = (k, r) => { const s = F[k]; if (!s) return `<tr class="dim"><td>${NAME(r)}</td><td class="r" colspan="6">Not enough flights yet</td></tr>`;
+  return `<tr class="${r.includes("GLA") ? "dim" : ""}"><td>${NAME(r)}</td><td class="r">${s.n}</td><td class="r">${s.up} / ${s.same} / ${s.down}</td><td class="r">${gbp(s.median_before)}</td><td class="r">${gbp(s.median_2d)}</td><td class="r">${sgn(s.median_change)}</td><td class="r">${fmtD(s.dates[0])}–${fmtD(s.dates[1])}</td></tr>`; };
+document.getElementById("tbl-same").innerHTML =
+  `<thead><tr><th>Route</th><th class="r">Flights</th><th class="r">Rose / same / fell</th><th class="r">Typical 14 days before</th><th class="r">Typical 2 days before</th><th class="r">Typical change</th><th class="r">Flight dates</th></tr></thead><tbody>` +
+  `<tr class="subhead"><td colspan="7">Full fare</td></tr>` + ROUTES.map(r => sameRow("full:" + r + ":14", r)).join("") +
+  `<tr class="subhead"><td colspan="7">ADS fare (small samples)</td></tr>` + ROUTES.map(r => sameRow("ads:" + r + ":14", r)).join("") + `</tbody>`;
+labelize("tbl-same", ["", "Flights", "Rose / same / fell", "Typical 14 days before", "Typical 2 days before", "Typical change", "Flight dates"]);
+
+// Finding 3
+const N = DATA.short_notice;
+const shortCells = k => { const s = N[k]; return s ? `<td class="r">${gbp(s.median)}</td><td class="r">${gbp(s.min)}–${gbp(s.max)}</td><td class="r">${s.n}</td><td class="r">${s.no_fare_shown}</td>` : `<td class="r" colspan="4">–</td>`; };
+document.getElementById("tbl-short").innerHTML =
+  `<thead><tr><th rowspan="2">Route</th><th class="r" colspan="4">With ADS card</th><th class="r" colspan="4">Full fare</th></tr>
+   <tr><th class="r">Typical</th><th class="r">Range</th><th class="r">Dates priced</th><th class="r">No fare shown</th><th class="r">Typical</th><th class="r">Range</th><th class="r">Dates priced</th><th class="r">No fare shown</th></tr></thead><tbody>` +
+  ROUTES.map(r => `<tr><td>${NAME(r)}</td>${shortCells("ads:" + r)}${shortCells("full:" + r)}</tr>`).join("") + `</tbody>`;
+labelize("tbl-short", ["", "With ADS card, typical", "With ADS card, range", "ADS dates priced", "ADS dates with no fare shown",
+  "Full fare, typical", "Full fare, range", "Full-fare dates priced", "Full-fare dates with no fare shown"]);
+
+</script>
+</body>
+</html>
