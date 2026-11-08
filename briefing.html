@@ -167,7 +167,7 @@ footer { padding-top: 28px; border-top: 1px solid var(--rule); font-size: 13px; 
   <div class="brief">
     <div class="point"><span class="n">1</span><p><span class="tag strong">Strong</span><strong>Flying home to Shetland on a Sunday costs more, in almost every week through to next October.</strong> On Aberdeen to Sumburgh the Sunday fare was dearer than the same week's Tuesday to Thursday in all 32 weeks we could compare, typically by £88. On Edinburgh to Sumburgh it was dearer in 27 of 32 weeks, typically by £75. Leaving Shetland on a Sunday carries little or no premium.</p></div>
     <div class="point"><span class="n">2</span><p><span class="tag early">Early evidence</span><strong>The same flight gets dearer in its last two weeks.</strong> On the Aberdeen and Edinburgh routes, the fare two days before departure was higher than it had been 14 days before on 65 of 70 flights, typically by £50 to £79 one way. Glasgow doesn't follow the pattern: fares fell on 7 of 16 flights. This covers flights from 24 October to 10 November only.</p></div>
-    <div class="point"><span class="n">3</span><p><span class="tag fact">Fact, Oct–Nov flights</span><strong>An ADS card holder booking two days ahead typically paid £137 to £192 one way</strong> on the Aberdeen and Edinburgh routes, and £203 to £215 on Glasgow. Without the card, the same short-notice fares were £259 to £386.</p></div>
+    <div class="point"><span class="n">3</span><p><span class="tag fact">Fact, Oct–Nov flights</span><strong>Booking two days ahead typically cost £259 to £386 one way,</strong> depending on the route. After the ADS discount, island residents paid £137 to £215.</p></div>
   </div>
   <p class="callout"><b>Read before quoting.</b> Every figure is the cheapest one-way fare Loganair's website calendar showed for the whole day, not the price of a particular flight, and it hasn't been checked against the final checkout total. Four weeks is too short to say anything about seasons or about fares rising over time. The "Safe to say" section below gives wording that stays within what the data supports.</p>
 </section>
@@ -218,7 +218,7 @@ footer { padding-top: 28px; border-top: 1px solid var(--rule); font-size: 13px; 
   <p class="eyebrow">Finding 3 · <span class="tag fact">Fact, Oct–Nov flights</span></p>
   <h2 id="f3">What booking two days ahead actually cost</h2>
   <div class="prose stack">
-    <p>The cheapest one-way fare on sale two days before each flight, for flights from 12 October to 10 November (ADS and Glasgow from 21 October). With an ADS card, a typical short-notice return between Sumburgh and Edinburgh came to around £370 (£175 out, £192 back).</p>
+    <p>The cheapest one-way fare on sale two days before each flight, for flights from 12 October to 10 November (ADS and Glasgow from 21 October). A typical short-notice return between Sumburgh and Edinburgh came to around £720 (£386 out, £334 back), or around £370 after the ADS discount.</p>
     <p>On Sumburgh to Edinburgh, on 16 of 30 dates the cheapest seat on any flight two days out was £385.99. That is the top step of the fixed set of fares Loganair uses on that route, so nothing cheaper was left that day.</p>
   </div>
   <div class="tbl"><table id="tbl-short"></table></div>
@@ -238,7 +238,7 @@ footer { padding-top: 28px; border-top: 1px solid var(--rule); font-size: 13px; 
       <ul>
         <li>"On Aberdeen to Sumburgh, the Sunday flight home is dearer than midweek in every week Loganair has on sale through to next October, typically by about £88."</li>
         <li>"Looking at the same flights, fares between Shetland and Aberdeen or Edinburgh rose in the final two weeks on 65 of 70 flights checked, typically by £50 to £80."<span class="why">Say "early evidence" or "in October and November".</span></li>
-        <li>"Even with an ADS card, booking two days ahead typically cost £137 to £192 one way on the Aberdeen and Edinburgh routes this autumn."</li>
+        <li>"Booking two days ahead on the Aberdeen and Edinburgh routes typically cost £259 to £386 one way this autumn, or £137 to £192 after the ADS discount."</li>
         <li>"These are Loganair's own published fares, checked automatically about every five hours."</li>
       </ul>
     </div>
@@ -405,11 +405,11 @@ labelize("tbl-same", ["", "Flights", "Rose / same / fell", "Typical 14 days befo
 const N = DATA.short_notice;
 const shortCells = k => { const s = N[k]; return s ? `<td class="r">${gbp(s.median)}</td><td class="r">${gbp(s.min)}–${gbp(s.max)}</td><td class="r">${s.n}</td><td class="r">${s.no_fare_shown}</td>` : `<td class="r" colspan="4">–</td>`; };
 document.getElementById("tbl-short").innerHTML =
-  `<thead><tr><th rowspan="2">Route</th><th class="r" colspan="4">With ADS card</th><th class="r" colspan="4">Full fare</th></tr>
+  `<thead><tr><th rowspan="2">Route</th><th class="r" colspan="4">Fare</th><th class="r" colspan="4">After ADS discount</th></tr>
    <tr><th class="r">Typical</th><th class="r">Range</th><th class="r">Dates priced</th><th class="r">No fare shown</th><th class="r">Typical</th><th class="r">Range</th><th class="r">Dates priced</th><th class="r">No fare shown</th></tr></thead><tbody>` +
-  ROUTES.map(r => `<tr><td>${NAME(r)}</td>${shortCells("ads:" + r)}${shortCells("full:" + r)}</tr>`).join("") + `</tbody>`;
-labelize("tbl-short", ["", "With ADS card, typical", "With ADS card, range", "ADS dates priced", "ADS dates with no fare shown",
-  "Full fare, typical", "Full fare, range", "Full-fare dates priced", "Full-fare dates with no fare shown"]);
+  ROUTES.map(r => `<tr><td>${NAME(r)}</td>${shortCells("full:" + r)}${shortCells("ads:" + r)}</tr>`).join("") + `</tbody>`;
+labelize("tbl-short", ["", "Typical fare", "Range", "Dates priced", "Dates with no fare shown",
+  "After ADS discount, typical", "After ADS discount, range", "ADS dates priced", "ADS dates with no fare shown"]);
 
 </script>
 </body>
