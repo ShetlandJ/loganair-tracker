@@ -1,0 +1,505 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex">
+<title>Loganair Fare Graphics</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Didact+Gothic&family=Jost:wght@400;500;600;700&family=Caveat:wght@500;600&display=swap">
+<style>
+/* Layout: a short brief, then the carousel as a 2-up grid of 4:5 Instagram slides, each with its note; caption and wording guidance after. */
+:root {
+  /* Page (theme-aware) */
+  --bg: #f4f3ef; --surface: #fbfaf8; --ink: #22302f; --ink-2: #4f5f5e; --muted: #7d8a89; --rule: #dedcd5; --accent: #c8582c;
+  /* Slide palette (fixed: these are the images themselves, taken from @hmforshetland's carousel) */
+  --hm-cream: #efede8; --hm-slate: #263b3e; --hm-slate-2: #4c6366; --hm-text: #2e4244; --hm-orange: #dd6b3d; --hm-orange-soft: #e9a283;
+  --hm-paper: #f8f6f0; --hm-line: #c9d4dc; --hm-margin: #e3a9a9; --hm-pen: #2c3f6b;
+  --f-display: "Didact Gothic", "Century Gothic", "Avenir Next", Futura, sans-serif;
+  --f-bold: "Jost", "Futura", "Avenir Next", "Century Gothic", sans-serif;
+  --f-hand: "Caveat", "Bradley Hand", "Segoe Print", cursive;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #161d1d; --surface: #1e2726; --ink: #eceae4; --ink-2: #b7c0be; --muted: #87928f; --rule: #2f3a39; --accent: #ec8a60; color-scheme: dark; } }
+:root[data-theme="dark"] {
+  --bg: #161d1d; --surface: #1e2726; --ink: #eceae4; --ink-2: #b7c0be; --muted: #87928f; --rule: #2f3a39; --accent: #ec8a60; color-scheme: dark; }
+
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--ink); font: 400 16px/1.6 var(--f-display); -webkit-text-size-adjust: 100%; }
+.wrap { max-width: 1060px; margin: 0 auto; padding-block: 44px 80px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+h1, h2, h3 { margin: 0; font-weight: 400; text-wrap: balance; line-height: 1.12; }
+h1 { font: 400 clamp(34px, 6vw, 54px)/1.05 var(--f-display); letter-spacing: -0.01em; }
+h1 em { font-style: normal; color: var(--accent); }
+h2 { font: 400 28px/1.15 var(--f-display); }
+h3 { font: 600 16px/1.3 var(--f-bold); }
+p { margin: 0; }
+a { color: var(--accent); }
+.eyebrow { font: 500 12px/1.4 var(--f-bold); letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); }
+.prose { max-width: 66ch; }
+header { display: flex; flex-direction: column; gap: 16px; padding-bottom: 32px; }
+.dek { font-size: 18px; color: var(--ink-2); max-width: 64ch; }
+section { display: flex; flex-direction: column; gap: 20px; padding-block: 40px; border-top: 1px solid var(--rule); }
+
+/* Style notes */
+.style { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px 28px; }
+.style > div { display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+.swatches { display: flex; flex-wrap: wrap; gap: 8px; }
+.swatch { display: flex; align-items: center; gap: 8px; font: 400 13px/1.2 var(--f-bold); color: var(--ink-2); }
+.swatch i { width: 26px; height: 26px; border-radius: 50%; box-shadow: inset 0 0 0 1px rgba(0,0,0,.12); flex: none; }
+.style ul { margin: 0; padding-left: 18px; color: var(--ink-2); font-size: 15px; }
+.style li { margin-bottom: 4px; }
+
+/* Carousel grid */
+.deck { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 400px), 1fr)); gap: 40px 32px; }
+figure { margin: 0; display: flex; flex-direction: column; gap: 14px; min-width: 0; }
+figcaption { display: flex; flex-direction: column; gap: 6px; font-size: 15px; color: var(--ink-2); }
+figcaption .n { font: 600 12px/1.3 var(--f-bold); letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent); }
+figcaption b { color: var(--ink); font-weight: 400; }
+figcaption .src { font-size: 13px; color: var(--muted); }
+
+/* ===== Slides: designed at 100 units wide (1u = 1cqw), 4:5 ===== */
+.slide { width: 100%; max-width: 100%; aspect-ratio: 4 / 5; container-type: inline-size; border-radius: 6px; overflow: hidden;
+  box-shadow: 0 1px 2px rgba(0,0,0,.08), 0 8px 24px rgba(20,35,35,.10); }
+.s { position: relative; width: 100%; height: 100%; padding: 8cqw 8cqw 7cqw; display: flex; flex-direction: column;
+  font-family: var(--f-display); color: var(--hm-text); background: var(--hm-cream); }
+.s.dark { background: var(--hm-slate); color: #f2f0eb; }
+.s .o { color: var(--hm-orange); }
+.s .bd { font-family: var(--f-bold); font-weight: 600; }
+.s .tag { display: flex; justify-content: space-between; align-items: flex-start; gap: 4cqw; }
+.s .tag .who { display: flex; flex-direction: column; font-size: 3.3cqw; line-height: 1.25; }
+.s .tag .who b { font: 600 3.5cqw/1.25 var(--f-bold); }
+.s .tag .swipe { font: 600 3.4cqw/1 var(--f-bold); display: flex; align-items: center; gap: 1.6cqw; }
+.s .foot { font-size: 3.4cqw; }
+.dots { position: absolute; left: 0; right: 0; bottom: 2.6cqw; display: flex; justify-content: center; gap: 1.1cqw; }
+.dots i { width: 1.1cqw; height: 1.1cqw; border-radius: 50%; background: currentColor; opacity: .3; }
+.dots i.on { opacity: .9; }
+
+/* 1 cover */
+.cover { background:
+  linear-gradient(180deg, rgba(20,32,34,.25) 0%, rgba(20,32,34,.55) 55%, rgba(20,32,34,.85) 100%),
+  var(--hm-slate); }
+.cover .art { position: absolute; inset: 0; width: 100%; height: 100%; }
+.cover > *:not(.art):not(.dots):not(.photo-note) { position: relative; }
+.cover h2 { margin-top: auto; font: 400 14.4cqw/1.02 var(--f-display); letter-spacing: -0.01em; color: #f6f4ef; }
+.cover .foot { margin-top: 9cqw; color: #f2f0eb; }
+.photo-note { position: absolute; top: 22cqw; right: 8cqw; font: 500 2.4cqw/1.3 var(--f-bold); letter-spacing: .06em; text-transform: uppercase;
+  color: rgba(242,240,235,.55); border: 1px dashed rgba(242,240,235,.35); padding: 1.4cqw 2cqw; border-radius: 1cqw; max-width: 40cqw; text-align: right; }
+
+/* 2 squeeze */
+.squeeze h2 { font: 400 8.6cqw/1.08 var(--f-display); }
+.squeeze .plot { position: relative; flex: 1; margin: 6cqw 0 4cqw 12cqw; }
+.squeeze .grid { position: absolute; left: 0; right: 0; border-top: 1px solid rgba(46,66,68,.16); }
+.squeeze .grid span { position: absolute; left: -12cqw; top: -1.6cqw; font: 400 2.8cqw/1 var(--f-bold); color: var(--hm-slate-2); }
+.squeeze .rng { position: absolute; width: 17cqw; border-radius: 1.2cqw; }
+.squeeze .rng.b { left: 3cqw; background: var(--hm-slate-2); }
+.squeeze .rng.a { left: 39cqw; background: var(--hm-orange); }
+.squeeze .lab { position: absolute; font: 600 4.2cqw/1 var(--f-bold); white-space: nowrap; }
+.squeeze .lab small { display: block; font: 400 2.7cqw/1.2 var(--f-display); color: var(--hm-slate-2); margin-top: .6cqw; }
+.squeeze .col-h { position: absolute; bottom: -6.6cqw; font: 600 3.3cqw/1 var(--f-bold); width: 17cqw; text-align: center; }
+.squeeze p { font-size: 3.7cqw; line-height: 1.45; margin-top: 4cqw; }
+
+/* 3 six routes */
+.routes .bars { display: grid; grid-template-columns: repeat(6, 1fr); gap: 1.6cqw; align-items: end; height: 46cqw; margin-top: 4cqw; }
+.routes .bar { display: flex; flex-direction: column; align-items: center; justify-content: flex-end; height: 100%; gap: 1.4cqw; }
+.routes .v { font: 400 4.6cqw/1 var(--f-display); }
+.routes .fill { width: 100%; border-radius: .8cqw .8cqw 0 0; background: var(--hm-slate-2);
+  background-image: repeating-linear-gradient(0deg, rgba(255,255,255,.07) 0 .5cqw, transparent .5cqw 1.6cqw); }
+.routes .bar.hi .fill { background-color: var(--hm-orange); }
+.routes .bar.hi .v { color: var(--hm-orange); }
+.routes .names { display: grid; grid-template-columns: repeat(6, 1fr); gap: 1.6cqw; margin-top: 2cqw; text-align: center; }
+.routes .names div { font: 400 2.5cqw/1.2 var(--f-display); }
+.routes .names b { display: block; font: 500 2.6cqw/1.2 var(--f-bold); }
+.routes .names .hi b { font-weight: 700; }
+.routes .names small { display: block; margin-top: .8cqw; font: 400 2.2cqw/1.25 var(--f-bold); color: var(--hm-slate-2); }
+.routes p { font-size: 3.7cqw; line-height: 1.45; }
+.routes .body { margin-top: auto; display: flex; flex-direction: column; gap: 2.4cqw; }
+.routes .kick { font: 600 5cqw/1.2 var(--f-bold); color: var(--hm-orange); }
+
+/* 4 big number */
+.gone h2 { font: 400 7.4cqw/1.12 var(--f-display); }
+.gone .pair { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 4cqw; margin-top: auto; }
+.gone .pair > div { display: flex; flex-direction: column; gap: 1.4cqw; }
+.gone .big { font: 400 24cqw/.9 var(--f-display); letter-spacing: -0.03em; }
+.gone .pair small { font-size: 3.5cqw; line-height: 1.3; color: #cfd6d4; }
+.gone .arrow { font: 400 9cqw/1 var(--f-display); color: var(--hm-orange); }
+.gone .cells { display: grid; grid-template-columns: repeat(26, 1fr); gap: .6cqw; margin-top: 5cqw; }
+.gone .cells i { aspect-ratio: 1; border-radius: .3cqw; border: .35cqw solid var(--hm-orange-soft); }
+.gone p { margin-top: 4cqw; font-size: 3.7cqw; line-height: 1.45; color: #e6e9e7; }
+
+/* 5 notebook */
+.notes { background: var(--hm-slate); padding: 6cqw 7cqw 7cqw; }
+.paper { flex: 1; position: relative; background: var(--hm-paper); border-radius: .8cqw; transform: rotate(-1.4deg);
+  box-shadow: 0 1.2cqw 3cqw rgba(0,0,0,.28);
+  background-image: linear-gradient(90deg, transparent 13cqw, var(--hm-margin) 13cqw, var(--hm-margin) calc(13cqw + 1.5px), transparent calc(13cqw + 1.5px)),
+    repeating-linear-gradient(180deg, transparent 0 6.6cqw, var(--hm-line) 6.6cqw calc(6.6cqw + 1px));
+  background-position: 0 0, 0 3.4cqw; padding: 6cqw 5cqw 4cqw 16cqw; font-family: var(--f-hand); color: var(--hm-pen); }
+.paper .holes { position: absolute; left: 4.6cqw; top: 9cqw; bottom: 9cqw; display: flex; flex-direction: column; justify-content: space-between; }
+.paper .holes i { width: 3cqw; height: 3cqw; border-radius: 50%; background: var(--hm-slate); opacity: .9; }
+.paper h3 { font: 600 5.6cqw/6.6cqw var(--f-hand); color: var(--hm-pen); }
+.paper ul { list-style: none; margin: 0 0 3.3cqw; padding: 0; }
+.paper li { display: grid; grid-template-columns: 5cqw 1fr; gap: 1.6cqw; font: 500 4.5cqw/6.6cqw var(--f-hand); }
+.paper .box { width: 3.4cqw; height: 3.4cqw; border: .45cqw solid var(--hm-pen); border-radius: .5cqw; margin-top: 1.5cqw; position: relative; }
+.paper .box.tick::after { content: ""; position: absolute; left: .6cqw; top: -1.6cqw; width: 1.8cqw; height: 3.6cqw;
+  border: solid var(--hm-orange); border-width: 0 .7cqw .7cqw 0; transform: rotate(40deg); }
+.paper .miss { color: var(--hm-orange); }
+
+/* 6 aberdeen waffle */
+.waffle h2 { font: 400 8.4cqw/1.08 var(--f-display); }
+.waffle .cells { display: grid; grid-template-columns: repeat(14, 1fr); gap: 1cqw; margin-top: 6cqw; }
+.waffle .cells i { aspect-ratio: 1; border-radius: .5cqw; background: rgba(76,99,102,.28); }
+.waffle .cells i.up { background: var(--hm-orange); }
+.waffle .key { display: flex; gap: 5cqw; margin-top: 3cqw; font: 500 3.1cqw/1.2 var(--f-bold); }
+.waffle .key span { display: flex; align-items: center; gap: 1.6cqw; }
+.waffle .key i { width: 3cqw; height: 3cqw; border-radius: .5cqw; display: inline-block; }
+.waffle p { margin-top: auto; font-size: 3.7cqw; line-height: 1.45; }
+
+/* setup */
+.setup h2 { font: 400 7.6cqw/1.1 var(--f-display); margin-top: 5cqw; }
+.setup .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 3cqw; margin-top: auto; padding-top: 4cqw; border-top: 1px solid rgba(242,240,235,.25); }
+.setup .stats div { display: flex; flex-direction: column; gap: 1.2cqw; }
+.setup .stats b { font: 400 9cqw/1 var(--f-display); color: var(--hm-orange); }
+.setup .stats span { font-size: 3.2cqw; line-height: 1.3; color: #cfd6d4; }
+.setup p { margin-top: 4.5cqw; font-size: 3.6cqw; line-height: 1.45; color: #e6e9e7; }
+.setup p + p { margin-top: 2.4cqw; }
+
+/* good news */
+.good h2 { font: 400 9.6cqw/1.08 var(--f-display); }
+.good .drop { display: flex; align-items: baseline; gap: 5cqw; margin-top: auto; }
+.good .drop .was { font: 400 13cqw/.9 var(--f-display); color: var(--hm-slate-2); text-decoration: line-through; text-decoration-thickness: .7cqw; text-decoration-color: var(--hm-orange); }
+.good .drop .now { font: 400 18cqw/.9 var(--f-display); color: var(--hm-orange); }
+.good .drop small { font: 600 3.4cqw/1.25 var(--f-bold); padding-bottom: 1.4cqw; }
+.good .lbl { margin-top: 2.4cqw; font-size: 3.2cqw; color: var(--hm-slate-2); }
+.good p { margin-top: 6cqw; font-size: 3.9cqw; line-height: 1.5; }
+.good .kick { margin-top: 4cqw; font: 600 5cqw/1.2 var(--f-bold); color: var(--hm-orange); }
+
+/* 7 timeline */
+.when { background:
+  linear-gradient(180deg, rgba(38,59,62,.92), rgba(38,59,62,.98)), var(--hm-slate); }
+.when h2 { font: 400 10.4cqw/1.06 var(--f-display); margin-top: 6cqw; }
+.when .line { position: relative; height: 34cqw; margin-top: auto; }
+.when .axis { position: absolute; left: 0; right: 0; top: 18cqw; height: .5cqw; background: rgba(242,240,235,.35); }
+.when .tick { position: absolute; top: 19.6cqw; transform: translateX(-50%); font: 400 2.5cqw/1 var(--f-bold); color: rgba(242,240,235,.6); }
+.when .tick::before { content: ""; position: absolute; left: 50%; top: -2.2cqw; width: 1px; height: 1.4cqw; background: rgba(242,240,235,.5); }
+.when .pin { position: absolute; top: 16.4cqw; width: 3.6cqw; height: 3.6cqw; margin-left: -1.8cqw; border-radius: 50%; background: var(--hm-orange); box-shadow: 0 0 0 1cqw rgba(221,107,61,.25); }
+.when .pin.w { background: #f2f0eb; box-shadow: 0 0 0 1cqw rgba(242,240,235,.2); }
+.when .pl { position: absolute; top: 2cqw; transform: translateX(-50%); text-align: center; font: 600 3.6cqw/1.2 var(--f-bold); white-space: nowrap; }
+.when .pl small { display: block; font: 400 2.9cqw/1.3 var(--f-display); color: #cfd6d4; }
+.when .gap { position: absolute; top: 27cqw; height: 3cqw; border: .35cqw solid var(--hm-orange); border-top: 0; border-radius: 0 0 .8cqw .8cqw; }
+.when .gap span { position: absolute; left: 50%; top: 3.6cqw; transform: translateX(-50%); font: 600 4.2cqw/1 var(--f-bold); color: var(--hm-orange); white-space: nowrap; }
+.when p { margin-top: 6cqw; font-size: 3.7cqw; line-height: 1.45; color: #e6e9e7; }
+
+/* 8 questions */
+.ask h2 { font: 400 8.6cqw/1.1 var(--f-display); margin-top: 2cqw; }
+.ask .intro { font-size: 3.7cqw; line-height: 1.45; margin-top: 4cqw; }
+.ask .q { display: grid; grid-template-columns: 6.4cqw 1fr; gap: 3.4cqw; align-items: start; padding: 3cqw 0; border-top: 1px solid rgba(46,66,68,.18); }
+.ask .q:last-of-type { border-bottom: 1px solid rgba(46,66,68,.18); }
+.ask .qs { margin-top: 4cqw; }
+.ask .q svg { width: 6.4cqw; height: 6.4cqw; }
+.ask .q div { font: 400 4.3cqw/1.3 var(--f-display); }
+.ask .q small { display: block; margin-top: .8cqw; font: 600 2.9cqw/1.3 var(--f-bold); color: var(--hm-slate-2); }
+.ask .foot { margin-top: auto; font: 400 2.5cqw/1.4 var(--f-bold); color: var(--hm-slate-2); }
+
+/* Caption + wording */
+.cap-box { background: var(--surface); border: 1px solid var(--rule); border-radius: 6px; padding: 20px 22px; display: flex; flex-direction: column; gap: 14px; max-width: 72ch; }
+.cap-box pre { margin: 0; white-space: pre-wrap; font: 400 16px/1.6 var(--f-display); color: var(--ink); }
+.btn { align-self: flex-start; font: 600 14px/1 var(--f-bold); color: var(--surface); background: var(--ink); border: 0; border-radius: 4px; padding: 11px 16px; cursor: pointer; }
+.btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.say { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr)); gap: 16px; }
+.say > div { min-width: 0; padding: 18px 20px; border-radius: 6px; border: 1px solid var(--rule); background: var(--surface); display: flex; flex-direction: column; gap: 10px; }
+.say ul { margin: 0; padding-left: 18px; font-size: 15px; }
+.say li { margin-bottom: 8px; }
+.say .why { display: block; color: var(--muted); font-size: 14px; }
+.say .yes h3 { color: var(--accent); }
+footer { padding-top: 28px; border-top: 1px solid var(--rule); font-size: 13px; color: var(--muted); display: flex; flex-direction: column; gap: 6px; }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+
+</head>
+<body>
+<div class="wrap">
+<header>
+  <p class="eyebrow">For Hannah Mary Goodlad MSP · Prepared 26 November 2026</p>
+  <h1>Loganair fares: <em>suggested graphics</em></h1>
+  <p class="dek">A nine-slide swipe story on the November fare change, drawn in the style of the "Why should I vote?" post on @hmforshetland. It starts with the question, says who did the tracking, gives Loganair credit for the cut, then shows what the announcement left out. They're meant as a starting point for Alex. Every figure comes from Loganair's own published fares, with data to 25 November.</p>
+</header>
+
+<section aria-labelledby="style">
+  <h2 id="style">The house style these follow</h2>
+  <div class="style">
+    <div>
+      <h3>Colour</h3>
+      <div class="swatches">
+        <span class="swatch"><i style="background:#efede8"></i>Cream</span>
+        <span class="swatch"><i style="background:#263b3e"></i>Slate</span>
+        <span class="swatch"><i style="background:#dd6b3d"></i>Terracotta</span>
+        <span class="swatch"><i style="background:#4c6366"></i>Grey-teal</span>
+      </div>
+    </div>
+    <div>
+      <h3>Type</h3>
+      <ul>
+        <li>Light geometric sans for headlines, with the key words in terracotta</li>
+        <li>Bold geometric sans for figures and labels</li>
+        <li>Handwriting on lined paper for the checklist slide</li>
+      </ul>
+    </div>
+    <div>
+      <h3>Pattern</h3>
+      <ul>
+        <li>A photo cover with the name block and "Swipe →"</li>
+        <li>Cream and slate slides take turns</li>
+        <li>One number to a slide, short body text, a terracotta line that leads into the next slide</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section aria-labelledby="deck">
+  <h2 id="deck">The carousel</h2>
+  <div class="deck">
+
+    <!-- 1 cover -->
+    <figure>
+      <div class="slide"><div class="s dark cover">
+        <svg class="art" viewBox="0 0 100 125" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+          <rect width="100" height="125" fill="#263b3e"/>
+          <path d="M0 74 L22 70 L40 72 L58 68 L78 71 L100 69 L100 125 L0 125 Z" fill="#1f3133"/>
+          <path d="M44 125 L49 74 L51 74 L56 125 Z" fill="#30474a"/>
+          <path d="M49.9 80 L50.1 80 L50.3 90 L49.7 90 Z M49.6 96 L50.4 96 L50.8 110 L49.2 110 Z" fill="#6b7f80"/>
+          <circle cx="30" cy="73" r=".5" fill="#e9a283"/><circle cx="70" cy="72" r=".5" fill="#e9a283"/><circle cx="46" cy="76" r=".4" fill="#f2f0eb"/><circle cx="54" cy="76" r=".4" fill="#f2f0eb"/>
+        </svg>
+        <div class="tag"><div class="who"><b>Hannah Mary Goodlad</b>MSP for Shetland</div><div class="swipe">Swipe <span aria-hidden="true">→</span></div></div>
+        <div class="photo-note">Photo: a Loganair plane at Sumburgh, dusk</div>
+        <h2>How's the <span class="o">fare cut</span> going?</h2>
+        <div class="foot">We asked someone who's been watching the numbers.</div>
+        <div class="dots"></div>
+      </div></div>
+      <figcaption><span class="n">1 · The hook</span><b>A simple question that everyone in Shetland has an opinion on. The rest of the carousel answers it.</b><span class="src">Needs a real photo behind the type, like the dusk street on her voting post. The drawing only stands in for it.</span></figcaption>
+    </figure>
+
+    <!-- 2 setup -->
+    <figure>
+      <div class="slide"><div class="s dark setup">
+        <div class="tag"><div class="who"><b>Hannah Mary Goodlad</b>MSP for Shetland</div></div>
+        <h2>A local software engineer has been <span class="o">quietly tracking</span> Loganair's fares.</h2>
+        <p>Since October, a small program has checked Loganair's booking calendar every few hours. It records the cheapest fare for every day on sale, up to a year ahead.</p>
+        <p>So when Loganair announced it was cutting its top fares by more than a fifth, we could see exactly what changed.</p>
+        <div class="stats">
+          <div><b>191</b><span>checks since 10 October</span></div>
+          <div><b>6</b><span>routes to and from Sumburgh</span></div>
+          <div><b>1,730</b><span>flight dates compared</span></div>
+        </div>
+        <div class="dots" style="color:#f2f0eb"></div>
+      </div></div>
+      <figcaption><span class="n">2 · Who and how</span><b>This is what makes people trust the rest: a real person on the island, with a lot of data.</b><span class="src">Checks every 5½ hours on average, on Edinburgh, Glasgow and Aberdeen in both directions. The 1,730 dates had a fare both before and after the change.</span></figcaption>
+    </figure>
+
+    <!-- 3 good news -->
+    <figure>
+      <div class="slide"><div class="s good">
+        <h2>First, <span class="o">the good news.</span></h2>
+        <div class="drop">
+          <span class="was">£386</span>
+          <span class="now">£300</span>
+        </div>
+        <div class="lbl">Highest one-way fare between Sumburgh and Edinburgh or Glasgow</div>
+        <p>The cut is real. The top fare came down <span class="bd">22%</span>, just as Loganair said. If you book two days before you fly, you're typically paying <span class="bd">£25 to £30 less</span> than before.</p>
+        <p class="kick">But that's only one end of the story.</p>
+        <div class="dots"></div>
+      </div></div>
+      <figcaption><span class="n">3 · Credit where it's due</span><b>Starting with what went right makes the next slides harder to dismiss.</b><span class="src">Top fare £384.99–£388.99 before 4 Nov, £299.99 since (22–23% lower). Of 185 Edinburgh and Glasgow dates in the next 60 days, 158 got cheaper; the typical saving was £25–£30.</span></figcaption>
+    </figure>
+
+    <!-- 4 squeeze -->
+    <figure>
+      <div class="slide"><div class="s squeeze">
+        <h2>At the same time, the <span class="o">cheapest fare went up.</span></h2>
+        <div class="plot">
+          <div class="grid" style="bottom:100%"><span>£400</span></div>
+          <div class="grid" style="bottom:66.67%"><span>£300</span></div>
+          <div class="grid" style="bottom:33.33%"><span>£200</span></div>
+          <div class="grid" style="bottom:0%"><span>£100</span></div>
+          <div class="rng b" style="bottom:16.66%;height:78.67%"></div>
+          <div class="rng a" style="bottom:23.33%;height:43.33%"></div>
+          <div class="lab" style="left:22cqw;bottom:calc(95.33% - 2cqw)">£385.99<small>highest</small></div>
+          <div class="lab" style="left:22cqw;bottom:calc(16.66% - 2cqw)">£149.99<small>cheapest</small></div>
+          <div class="lab o" style="left:58cqw;bottom:calc(66.66% - 2cqw)">£299.99<small>highest</small></div>
+          <div class="lab o" style="left:58cqw;bottom:calc(23.33% - 2cqw)">£169.99<small>cheapest</small></div>
+          <div class="col-h" style="left:3cqw">Before</div>
+          <div class="col-h o" style="left:39cqw">After</div>
+        </div>
+        <p>Sumburgh to Edinburgh, one way. The top came down by <span class="bd">£86</span>, and the bottom came up by <span class="bd">£20</span>. The announcement didn't mention that part.</p>
+        <div class="dots"></div>
+      </div></div>
+      <figcaption><span class="n">4 · The catch</span><b>Both ends of the range on one chart. It's the single most useful picture in the set.</b><span class="src">Lowest and highest one-way fares in Loganair's calendar on 4 Nov (11:31) and after the change. Glasgow shows the same pattern.</span></figcaption>
+    </figure>
+
+    <!-- 5 six routes -->
+    <figure>
+      <div class="slide"><div class="s routes">
+        <div class="bd" style="font-size:3.2cqw;letter-spacing:.08em;text-transform:uppercase;color:var(--hm-slate-2)">Rise in the cheapest fare, one way</div>
+        <div class="bars">
+          <div class="bar"><span class="v">+£22</span><span class="fill" style="height:82%"></span></div>
+          <div class="bar hi"><span class="v">+£20</span><span class="fill" style="height:74.5%"></span></div>
+          <div class="bar"><span class="v">+£14</span><span class="fill" style="height:52%"></span></div>
+          <div class="bar"><span class="v">+£6</span><span class="fill" style="height:22.3%"></span></div>
+          <div class="bar"><span class="v">+£4</span><span class="fill" style="height:14.9%"></span></div>
+          <div class="bar"><span class="v">+£3</span><span class="fill" style="height:11.2%"></span></div>
+        </div>
+        <div class="names">
+          <div><b>Aberdeen</b>to Sumburgh<small>£97.99 → £119.99</small></div>
+          <div class="hi"><b class="o">Sumburgh</b>to Edinburgh<small>£149.99 → £169.99</small></div>
+          <div><b>Glasgow</b>to Sumburgh<small>£160.99 → £174.99</small></div>
+          <div><b>Sumburgh</b>to Glasgow<small>£168.99 → £174.99</small></div>
+          <div><b>Sumburgh</b>to Aberdeen<small>£115.99 → £119.99</small></div>
+          <div><b>Edinburgh</b>to Sumburgh<small>£166.99 → £169.99</small></div>
+        </div>
+        <div class="body">
+          <p>And it wasn't just Edinburgh. The cheapest fare went up on <span class="bd">every one</span> of the six Sumburgh routes, by between <span class="bd">£3</span> and <span class="bd">£22</span>.</p>
+          <p class="kick">So what happened to that £149.99 fare?</p>
+        </div>
+        <div class="dots"></div>
+      </div></div>
+      <figcaption><span class="n">5 · Every route</span><b>Built like her turnout chart: one bar highlighted, values on top, places underneath.</b><span class="src">Lowest fare on any date up to 330 days ahead: 4 Nov at 11:31 against 25 Nov at 13:28.</span></figcaption>
+    </figure>
+
+    <!-- 6 gone -->
+    <figure>
+      <div class="slide"><div class="s dark gone">
+        <h2>Sumburgh to Edinburgh for <span class="o">£149.99</span></h2>
+        <div class="cells" id="cells153" aria-hidden="true"></div>
+        <div class="pair">
+          <div><span class="big">153</span><small>days you could fly at that price before the change</small></div>
+          <span class="arrow" aria-hidden="true">→</span>
+          <div><span class="big o">0</span><small>days you can now</small></div>
+        </div>
+        <p>The cheapest you'll find on that route today is <span class="bd">£169.99</span>.</p>
+        <div class="dots" style="color:#f2f0eb"></div>
+      </div></div>
+      <figcaption><span class="n">6 · The fare that went</span><b>The most quotable number in the set. One square for each of the 153 days.</b><span class="src">153 of 311 dates on sale carried £149.99 on 4 Nov. None of those still on sale is at or below it now. They cost £169.99 to £263.99, typically £179.99.</span></figcaption>
+    </figure>
+
+    <!-- 7 aberdeen -->
+    <figure>
+      <div class="slide"><div class="s waffle">
+        <h2>On Aberdeen, <span class="o">78 of 98</span> flights got dearer</h2>
+        <div class="cells" id="cells98" aria-hidden="true"></div>
+        <div class="key"><span><i style="background:var(--hm-orange)"></i>Dearer · 78</span><span><i style="background:rgba(76,99,102,.28)"></i>Cheaper · 20</span></div>
+        <p>The cut was mostly felt on Edinburgh and Glasgow. Aberdeen's top fare fell too, but few flights there were ever priced at it. For flights in the 60 days after the change, the typical fare went <span class="bd">up £5 to £7</span>.</p>
+        <div class="dots"></div>
+      </div></div>
+      <figcaption><span class="n">7 · Aberdeen</span><b>This one matters to anyone flying for hospital appointments, offshore work or connections.</b><span class="src">Both Aberdeen directions combined. Fare on 4 Nov at 11:31 against 6 Nov at 23:29, for dates with a fare at both checks.</span></figcaption>
+    </figure>
+
+    <!-- 8 notebook recap -->
+    <figure>
+      <div class="slide"><div class="s notes">
+        <div class="paper">
+          <div class="holes" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i></div>
+          <h3>What Loganair told us:</h3>
+          <ul>
+            <li><span class="box tick"></span><span>Top fares to Edinburgh &amp; Glasgow cut by over a fifth</span></li>
+            <li><span class="box tick"></span><span>Cheaper fares when booking last minute</span></li>
+          </ul>
+          <h3 class="miss">What it didn't:</h3>
+          <ul>
+            <li><span class="box"></span><span>The cheapest fares went up on all six routes</span></li>
+            <li><span class="box"></span><span>Most Aberdeen flights got a bit dearer</span></li>
+            <li><span class="box"></span><span>The new fares were live 13 days before the news</span></li>
+          </ul>
+        </div>
+        <div class="dots" style="color:#f2f0eb"></div>
+      </div></div>
+      <figcaption><span class="n">8 · The recap</span><b>Her notebook slide, used to sum up. It gives Loganair credit before listing what was left out.</b><span class="src">"Told us" follows Shetland News, 17 Nov. New fares appeared between the 11:31 and 18:51 checks on 4 Nov, when 1,540 fares changed in one check against about 16 in a typical one.</span></figcaption>
+    </figure>
+
+    <!-- 9 questions -->
+    <figure>
+      <div class="slide"><div class="s ask">
+        <h2>Questions for <span class="o">Loganair</span></h2>
+        <p class="intro">Cheaper last-minute fares are welcome. But islanders deserve the full picture:</p>
+        <div class="qs">
+          <div class="q"><svg viewBox="0 0 24 24" fill="none" stroke="#dd6b3d" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M9 7h8v8"/></svg><div>Why were the cheapest fares raised, and why wasn't that in the announcement?</div></div>
+          <div class="q"><svg viewBox="0 0 24 24" fill="none" stroke="#dd6b3d" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg><div>Why did most Aberdeen fares go up, when Edinburgh and Glasgow came down?</div></div>
+          <div class="q"><svg viewBox="0 0 24 24" fill="none" stroke="#dd6b3d" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg><div>What will the change do to the average fare islanders actually pay?<small>Only Loganair holds the seat-by-seat figures</small></div></div>
+        </div>
+        <div class="foot">Data: Loganair's published one-way fares from its online booking calendar, checked automatically about every 5½ hours from 10 Oct to 25 Nov 2026.</div>
+        <div class="dots"></div>
+      </div></div>
+      <figcaption><span class="n">9 · The ask</span><b>Mirrors her contact-card slide. Ending on questions keeps it fair and gives Loganair something to answer.</b><span class="src">From the briefing's "only Loganair can answer" list. Swap in whatever she actually asks them.</span></figcaption>
+    </figure>
+
+  </div>
+</section>
+
+<section aria-labelledby="caption">
+  <h2 id="caption">Draft caption</h2>
+  <p class="prose" style="color:var(--ink-2)">Written in the voice of her own posts. Edit freely.</p>
+  <div class="cap-box">
+    <pre id="captext">How's the Loganair fare cut going?
+
+A local software engineer has been tracking Loganair's fares since October, checking every few hours. So when the cut was announced, we could see exactly what changed.
+
+The good news is real. The most expensive fares to Edinburgh and Glasgow have come down by more than a fifth, and booking last minute is now cheaper.
+
+But at the same time, the cheapest fare went up on all six Sumburgh routes. The £149.99 fare to Edinburgh, on sale on 153 days before the change, has gone. And on Aberdeen, most flights got a little dearer.
+
+Loganair says if you plan ahead you'll still get its lowest fares. That's true, but those lowest fares are now higher than they were. Islanders deserve the full picture, and I've asked Loganair to explain.
+
+#shetland #scotland #loganair #islandtransport</pre>
+    <button class="btn" id="copy" type="button">Copy caption</button>
+  </div>
+</section>
+
+<section aria-labelledby="say">
+  <h2 id="say">Keeping it watertight</h2>
+  <p class="prose" style="color:var(--ink-2)">Loganair will check every word of this, so the graphics only say what the data supports. If the wording changes, keep it on the left-hand side.</p>
+  <div class="say">
+    <div class="yes"><h3>Safe to say</h3>
+      <ul>
+        <li>The cheapest fare rose on all six Sumburgh routes, by £3 to £22, when the top fares were cut.</li>
+        <li>The highest fare to Edinburgh or Glasgow fell from about £386 to £300, as Loganair said.</li>
+        <li>£149.99 Sumburgh to Edinburgh was on 153 dates. It's on none now.</li>
+        <li>On Aberdeen, most flights in the following 60 days got slightly dearer.</li>
+        <li>The new fares were on sale from 4 November, 13 days before the announcement.</li>
+      </ul>
+    </div>
+    <div><h3>Avoid</h3>
+      <ul>
+        <li>"The cut isn't real" or "Loganair misled people."<span class="why">The top fares fell as stated.</span></li>
+        <li>"Fares went up overall."<span class="why">957 dates rose and 720 fell, but the average change was a £1 fall.</span></li>
+        <li>"The cut was paid for by raising the cheapest fares."<span class="why">That needs seat sales, which only Loganair has.</span></li>
+        <li>"£149.99 was the normal price."<span class="why">Tracking began on 10 Oct, and it may have been a promotional fare.</span></li>
+        <li>Anything about residents' ADS fares or Fly Flex tickets.<span class="why">The data can't show those reliably.</span></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <p>Figures are the cheapest one-way fare Loganair's website calendar showed for each day, not the price of a particular flight. The full briefing and data are public at <a href="https://github.com/shetlandj/loganair-tracker" target="_blank" rel="noopener">github.com/shetlandj/loganair-tracker</a>.</p>
+  <p>Data to 25 November 2026, 13:28 GMT.</p>
+</footer>
+</div>
+
+<script>
+(function () {
+  const allDots = document.querySelectorAll(".deck .dots");
+  allDots.forEach((d, i) => { d.innerHTML = Array.from({ length: allDots.length }, (_, j) => j === i ? '<i class="on"></i>' : "<i></i>").join(""); });
+  const c153 = document.getElementById("cells153");
+  c153.innerHTML = "<i></i>".repeat(153);
+  const c98 = document.getElementById("cells98");
+  c98.innerHTML = Array.from({ length: 98 }, (_, i) => i < 78 ? '<i class="up"></i>' : "<i></i>").join("");
+  const btn = document.getElementById("copy"), txt = document.getElementById("captext");
+  btn.addEventListener("click", () => {
+    const done = () => { btn.textContent = "Copied"; setTimeout(() => (btn.textContent = "Copy caption"), 1600); };
+    const fallback = () => { const r = document.createRange(); r.selectNodeContents(txt); const s = getSelection(); s.removeAllRanges(); s.addRange(r); btn.textContent = "Selected. Press Ctrl/Cmd+C"; };
+    try { navigator.clipboard.writeText(txt.textContent).then(done, fallback); } catch (e) { fallback(); }
+  });
+})();
+</script>
+</body>
+</html>
