@@ -1,0 +1,35 @@
+name: stale
+
+# A run that never starts can't report itself, so this checks from outside
+# that track has logged a run recently. GitHub drops scheduled runs when busy;
+# the longest gap seen so far is about 12 hours.
+on:
+  schedule:
+    - cron: "17 */3 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check the last run is under 18 hours old
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          last=$(tail -n 1 data/runs.csv | cut -d, -f1)
+          age=$(( ($(date -u +%s) - $(date -u -d "$last" +%s)) / 3600 ))
+          echo "Last run $last, ${age}h ago"
+          [ "$age" -lt 18 ] && exit 0
+          body="No tracker run has been logged for ${age} hours (last: $last). Check the track workflow's recent runs."
+          open=$(gh issue list --state open --search "in:title \"Tracker problem\"" --json number --jq '.[0].number')
+          if [ -n "$open" ]; then
+            gh issue comment "$open" --body "$body"
+          else
+            gh issue create --title "Tracker problem: no runs for ${age}h" --body "$body"
+          fi
+          exit 1

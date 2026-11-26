@@ -40,6 +40,9 @@ FARE_FIELDS = ["snapshot_utc", "origin", "dest", "flight_date", "days_out", "pri
 RUN_FIELDS = ["snapshot_utc", "routes_ok", "days_seen", "changes"]
 # Written only when a run sees a price drop; the workflow turns it into an issue.
 DROPS = Path(__file__).parent / "drops.md"
+# Written when any fetch fails or comes back looking blocked; the workflow
+# commits the data it did get, then opens an issue and fails the run.
+PROBLEMS = Path(__file__).parent / "problems.md"
 
 
 def fetch_month(origin, dest, start, end, ads):
@@ -112,15 +115,31 @@ def main():
     horizon_end = today + dt.timedelta(days=HORIZON_DAYS)
 
     # routes_ok and days_seen count each (route, fare kind) fetch.
-    total_changes, drops, routes_ok, days_seen = 0, [], 0, 0
+    total_changes, drops, routes_ok, days_seen, problems = 0, [], 0, 0, []
     for kind, path, ads in FARE_KINDS:
         last, last_price = last_recorded(path)
         changes = []
         for origin, dest in ROUTES:
-            try:
-                fares = fetch_route(origin, dest, today, horizon_end, ads)
-            except Exception as e:
-                print(f"{origin}-{dest} ({kind}): failed: {e}")
+            fares, error = None, None
+            for attempt in range(2):
+                try:
+                    fares = fetch_route(origin, dest, today, horizon_end, ads)
+                    error = None
+                    break
+                except Exception as e:
+                    error = e
+                    time.sleep(10)
+            if error is None:
+                # An empty or all-unpriced answer is what a block that still
+                # returns 200 looks like, so treat it as a failure.
+                priced = sum(1 for price, _ in fares.values() if price)
+                if len(fares) < HORIZON_DAYS * 0.9:
+                    error = f"only {len(fares)} of {HORIZON_DAYS + 1} days returned"
+                elif priced == 0:
+                    error = "no priced days returned"
+            if error is not None:
+                print(f"{origin}-{dest} ({kind}): failed: {error}")
+                problems.append(f"- {origin} → {dest} ({kind}): {error}")
                 continue
             routes_ok += 1
             days_seen += len(fares)
@@ -157,8 +176,10 @@ def main():
                          + "\n".join(lines) + "\n")
     print(f"{routes_ok}/{len(ROUTES) * len(FARE_KINDS)} route fetches, {days_seen} days, "
           f"{total_changes} changes, {len(drops)} drops")
-    if routes_ok == 0:
-        raise SystemExit(1)
+    if problems:
+        PROBLEMS.write_text(
+            f"Run at {now.isoformat()}: {routes_ok} of {len(ROUTES) * len(FARE_KINDS)} "
+            "fetches looked healthy.\n\n" + "\n".join(problems) + "\n")
 
 
 if __name__ == "__main__":

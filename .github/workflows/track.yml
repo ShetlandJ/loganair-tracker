@@ -35,3 +35,19 @@ jobs:
           git add data
           git commit -m "snapshot $(date -u +%Y-%m-%dT%H:%MZ)" || exit 0
           git push
+      # Last, so the data that did come back is committed first. One open issue
+      # at a time; later failures comment on it. Failing the run sends GitHub's
+      # failed-workflow email.
+      - name: Report fetch problems
+        if: hashFiles('problems.md') != ''
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          open=$(gh issue list --state open --search "in:title \"Tracker problem\"" --json number --jq '.[0].number')
+          if [ -n "$open" ]; then
+            gh issue comment "$open" --body-file problems.md
+          else
+            gh issue create --title "Tracker problem: fetches failing" --body-file problems.md
+          fi
+          cat problems.md
+          exit 1
