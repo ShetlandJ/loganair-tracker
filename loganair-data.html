@@ -173,6 +173,16 @@ ol.how { padding-left: 20px; }
 .tl dd { margin: 0; font-size: 15px; min-width: 0; }
 .tl dt.key, .tl dd.key { color: var(--accent); font-weight: 600; }
 @media (max-width: 520px) { .tl { grid-template-columns: 1fr; gap: 2px; } .tl dd { margin-bottom: 10px; } }
+.toc { padding-block: 24px 28px; border-top: 1px solid var(--rule); display: flex; flex-direction: column; gap: 12px; }
+.toc ol { list-style: none; margin: 0; padding: 0; columns: 2 280px; column-gap: 32px; }
+.toc li { break-inside: avoid; padding: 5px 0; border-bottom: 1px solid var(--rule); }
+.toc a { display: flex; gap: 12px; align-items: baseline; text-decoration: none; color: var(--ink); font-size: 15px; }
+.toc a:hover span:last-child { color: var(--accent); text-decoration: underline; text-underline-offset: 3px; }
+.toc a:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; border-radius: 2px; }
+.toc .k { font: 500 12px/1.6 var(--f-data); color: var(--muted); min-width: 2.2em; }
+html { scroll-behavior: smooth; }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+h2[id] { scroll-margin-top: 48px; }
 </style>
 </head>
 <body>
@@ -190,6 +200,22 @@ ol.how { padding-left: 20px; }
     <div><dt>Change first recorded</dt><dd>4 Nov 2026, 18:51 GMT</dd></div>
   </dl>
 </header>
+
+<nav class="toc" aria-labelledby="toc-h">
+  <p class="eyebrow" id="toc-h">Contents</p>
+  <ol>
+    <li><a href="#asked"><span class="k"></span><span>The two questions asked</span></a></li>
+    <li><a href="#timeline"><span class="k"></span><span>Timeline</span></a></li>
+    <li><a href="#how"><span class="k"></span><span>How the fares were collected</span></a></li>
+    <li><a href="#f1"><span class="k">F1</span><span>The highest fares fell by 18% to 23%</span></a></li>
+    <li><a href="#f2"><span class="k">F2</span><span>The lowest fares rose on all six routes</span></a></li>
+    <li><a href="#f3"><span class="k">F3</span><span>Across all dates, the change was close to neutral on average</span></a></li>
+    <li><a href="#f4"><span class="k">F4</span><span>The change arrived in one update on 4 November</span></a></li>
+    <li><a href="#limits"><span class="k"></span><span>Limits</span></a></li>
+    <li><a href="#q"><span class="k"></span><span>Questions we'd welcome answers to</span></a></li>
+    <li><a href="#files"><span class="k"></span><span>Files</span></a></li>
+  </ol>
+</nav>
 
 <section aria-labelledby="asked">
   <h2 id="asked">The two questions asked</h2>
