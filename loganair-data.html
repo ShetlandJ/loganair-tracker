@@ -235,15 +235,16 @@ ol.how { padding-left: 20px; }
   <p class="eyebrow">Finding 2</p>
   <h2 id="f2">The lowest fares rose on all six routes</h2>
   <p class="prose">Each route's lowest fare was the same in every check from 20 October to 4 November. It changed in the same update as the highest fare. None of the dates that carried the earlier lowest fare, and are still on sale, is at or below it on 25 November.</p>
+  <p class="prose">How many dates carry the lowest fare differs by route. On the Aberdeen routes the new lowest fare is on about twice as many dates as the old one was (105 against 57, and 118 against 47). On the Edinburgh and Glasgow routes it is on fewer.</p>
   <div class="tbl"><table>
-    <thead><tr><th>Route</th><th class="r">Lowest, 4 Nov</th><th class="r">Dates at it</th><th class="r">Lowest, 25 Nov</th><th class="r">Of those dates, at or below the old fare now</th></tr></thead>
+    <thead><tr><th>Route</th><th class="r">Lowest, 4 Nov</th><th class="r">Dates at it</th><th class="r">Lowest, 25 Nov</th><th class="r">Dates at it</th><th class="r">Of the old dates, at or below the old fare now</th></tr></thead>
     <tbody>
-      <tr><td>Sumburgh to Edinburgh</td><td class="r" data-label="Lowest, 4 Nov">£149.99</td><td class="r" data-label="Dates at it">153</td><td class="r" data-label="Lowest, 25 Nov">£169.99</td><td class="r" data-label="At or below old fare now">0 of 147</td></tr>
-      <tr><td>Edinburgh to Sumburgh</td><td class="r" data-label="Lowest, 4 Nov">£166.99</td><td class="r" data-label="Dates at it">116</td><td class="r" data-label="Lowest, 25 Nov">£169.99</td><td class="r" data-label="At or below old fare now">0 of 113</td></tr>
-      <tr><td>Sumburgh to Glasgow</td><td class="r" data-label="Lowest, 4 Nov">£168.99</td><td class="r" data-label="Dates at it">69</td><td class="r" data-label="Lowest, 25 Nov">£174.99</td><td class="r" data-label="At or below old fare now">0 of 66</td></tr>
-      <tr><td>Glasgow to Sumburgh</td><td class="r" data-label="Lowest, 4 Nov">£160.99</td><td class="r" data-label="Dates at it">85</td><td class="r" data-label="Lowest, 25 Nov">£174.99</td><td class="r" data-label="At or below old fare now">0 of 81</td></tr>
-      <tr><td>Sumburgh to Aberdeen</td><td class="r" data-label="Lowest, 4 Nov">£115.99</td><td class="r" data-label="Dates at it">57</td><td class="r" data-label="Lowest, 25 Nov">£119.99</td><td class="r" data-label="At or below old fare now">0 of 57</td></tr>
-      <tr><td>Aberdeen to Sumburgh</td><td class="r" data-label="Lowest, 4 Nov">£97.99</td><td class="r" data-label="Dates at it">47</td><td class="r" data-label="Lowest, 25 Nov">£119.99</td><td class="r" data-label="At or below old fare now">0 of 47</td></tr>
+      <tr><td>Sumburgh to Edinburgh</td><td class="r" data-label="Lowest, 4 Nov">£149.99</td><td class="r" data-label="Dates at it">153</td><td class="r" data-label="Lowest, 25 Nov">£169.99</td><td class="r" data-label="Dates at it, 25 Nov">40</td><td class="r" data-label="At or below old fare now">0 of 147</td></tr>
+      <tr><td>Edinburgh to Sumburgh</td><td class="r" data-label="Lowest, 4 Nov">£166.99</td><td class="r" data-label="Dates at it">116</td><td class="r" data-label="Lowest, 25 Nov">£169.99</td><td class="r" data-label="Dates at it, 25 Nov">86</td><td class="r" data-label="At or below old fare now">0 of 113</td></tr>
+      <tr><td>Sumburgh to Glasgow</td><td class="r" data-label="Lowest, 4 Nov">£168.99</td><td class="r" data-label="Dates at it">69</td><td class="r" data-label="Lowest, 25 Nov">£174.99</td><td class="r" data-label="Dates at it, 25 Nov">25</td><td class="r" data-label="At or below old fare now">0 of 66</td></tr>
+      <tr><td>Glasgow to Sumburgh</td><td class="r" data-label="Lowest, 4 Nov">£160.99</td><td class="r" data-label="Dates at it">85</td><td class="r" data-label="Lowest, 25 Nov">£174.99</td><td class="r" data-label="Dates at it, 25 Nov">58</td><td class="r" data-label="At or below old fare now">0 of 81</td></tr>
+      <tr><td>Sumburgh to Aberdeen</td><td class="r" data-label="Lowest, 4 Nov">£115.99</td><td class="r" data-label="Dates at it">57</td><td class="r" data-label="Lowest, 25 Nov">£119.99</td><td class="r" data-label="Dates at it, 25 Nov">105</td><td class="r" data-label="At or below old fare now">0 of 57</td></tr>
+      <tr><td>Aberdeen to Sumburgh</td><td class="r" data-label="Lowest, 4 Nov">£97.99</td><td class="r" data-label="Dates at it">47</td><td class="r" data-label="Lowest, 25 Nov">£119.99</td><td class="r" data-label="Dates at it, 25 Nov">118</td><td class="r" data-label="At or below old fare now">0 of 47</td></tr>
     </tbody>
   </table></div>
   <p class="cap prose">"Lowest" is the lowest fare shown on any flight date from the day of the check, up to 330 days ahead. A few dates kept the earlier lowest fare for some days after 4 November; all had moved by 21 November. Sources: <code>lowest-and-highest-fare-by-check.csv</code>, <code>old-lowest-fare-dates.csv</code>.</p>
@@ -286,7 +287,7 @@ ol.how { padding-left: 20px; }
     <li>Calendar prices have not been checked against the final checkout total.</li>
     <li>A day with no fare shown can mean sold out, not on sale, or no flight. The data can't tell which.</li>
     <li>Checks ran about every 5½ hours, so a fare that changed and changed back between checks wouldn't be seen.</li>
-    <li>Tracking began on 10 October. We don't know whether the earlier lowest fares were standard or promotional, or how long they had been in place.</li>
+    <li>Tracking began on 10 October, and far-ahead dates on all routes only from 19 October. The earlier lowest fares were seen unchanged for about two weeks before 4 November. We don't know whether they were standard or promotional, how long they had been in place, or whether they would have changed anyway.</li>
     <li>ADS fares are included in the files, but the ADS calendar shows no fare for many dates far ahead, so the findings above use full fares only.</li>
     <li>Nothing here measures what passengers paid or how many seats were sold at each price.</li>
   </ul>
