@@ -167,6 +167,12 @@ footer { padding-top: 28px; border-top: 1px solid var(--rule); font-size: 13px; 
 code { font: 400 0.92em var(--f-data); }
 .point .stack { min-width: 0; }
 ol.how { padding-left: 20px; }
+.tl { display: grid; grid-template-columns: max-content 1fr; gap: 12px 20px; margin: 0; padding: 16px 18px;
+  background: var(--surface); border: 1px solid var(--rule); border-radius: 6px; }
+.tl dt { font: 500 13px/1.6 var(--f-data); color: var(--ink-2); white-space: nowrap; }
+.tl dd { margin: 0; font-size: 15px; min-width: 0; }
+.tl dt.key, .tl dd.key { color: var(--accent); font-weight: 600; }
+@media (max-width: 520px) { .tl { grid-template-columns: 1fr; gap: 2px; } .tl dd { margin-bottom: 10px; } }
 </style>
 </head>
 <body>
@@ -198,6 +204,23 @@ ol.how { padding-left: 20px; }
     <div class="point"><span class="n">2</span><div class="stack"><p><strong>Which fare products were compared?</strong></p>
       <p class="how">The lowest one-way fare per person that the fare calendar on loganair.co.uk shows for each day. We take this to be the Fly fare, as the lowest-priced product. The fall we measured in the highest fare on the Edinburgh and Glasgow routes, 22% to 23%, matches Loganair's figure for maximum Fly fares. We can't see Fly Flex or Fly Flex Plus prices. Corrections are welcome if the calendar shows anything else.</p></div></div>
   </div>
+</section>
+
+<section aria-labelledby="timeline">
+  <h2 id="timeline">Timeline</h2>
+  <dl class="tl">
+    <dt>10 Oct 2026</dt><dd>Tracking begins: Edinburgh and Aberdeen full fares.</dd>
+    <dt>19 Oct</dt><dd>Glasgow routes and ADS fares added.</dd>
+    <dt>20 Oct – 4 Nov</dt><dd>Each route's lowest fare is the same in every check.</dd>
+    <dt>4 Nov, 11:31</dt><dd>Last check before the change. The "before" fares.</dd>
+    <dt class="key">4 Nov, 18:51</dt><dd class="key">The tracker records the change: 1,540 fares differ from the previous check. Committed to the public repository at 18:54 (<a href="https://github.com/ShetlandJ/loganair-tracker/commit/548ffe0881114f8244eb3fa1b5327758755ce7af">548ffe0</a>).</dd>
+    <dt>5 – 6 Nov</dt><dd>New fares keep arriving on the remaining dates.</dd>
+    <dt>6 Nov, 23:29</dt><dd>The "after" check used for the same-date comparison.</dd>
+    <dt>17 Nov</dt><dd>Loganair announces lower fares for short-notice travel.</dd>
+    <dt>21 Nov</dt><dd>The last dates still carrying an earlier lowest fare have moved.</dd>
+    <dt>25 Nov, 13:28</dt><dd>The check the files on this page are frozen at.</dd>
+  </dl>
+  <p class="cap prose">Times are GMT. Every check is listed in <code>checks.csv</code>, and the repository's commit history shows when each one was recorded.</p>
 </section>
 
 <section aria-labelledby="how">
